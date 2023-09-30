@@ -1,0 +1,103 @@
+import { Request, Response } from "express";
+import Routers from "../RouterController";
+import VerifyAuth from "../../middleware/VerifyAuth";
+import randomKodeNumber, { randomKodeNumberSampah } from "../../helpers/utils";
+import SetorSampah from "../../db/models/SetorSampahs";
+import error, { success } from "../../helpers/response";
+import DetailSampahNasabahs from "../../db/models/DetailSampahNasabah";
+import JenisBarang from "../../db/models/JenisBarang";
+import DetailSampahBs from "../../db/models/DetailSampahBS";
+import Penimbang from "../../db/models/Penimbang";
+import Nasabah from "../../db/models/Nasabah";
+import JenisSampahKerings from "../../db/models/JenisSamapahKerings";
+import TarikSaldoNasabahs from "../../db/models/Tariksaldonasabah";
+import Biayaadmins from "../../db/models/Biayaadmin";
+
+class TransaksiTarikSaldoController extends Routers {
+  constructor() {
+    super();
+    this.router.post("/service/saldo", this.tarikSaldo.bind(this));
+    this.router.get("/service/cek", this.riwayatPenarikanSaldo.bind(this));
+  }
+
+  async tarikSaldo(req: Request, res: Response) {
+    try {
+      const {  jumlah_penarikan, pin,kode_nasabah, kode_admin } = req.body;
+
+      const kodeNasabah = await Nasabah.findByPk(kode_nasabah);
+      const saldoNasabah = await DetailSampahNasabahs.findAll({
+        where:{
+            kode_nasabah:kode_nasabah
+        }
+      });
+      const biayaAdmin = await Biayaadmins.findAll();
+
+      if(!kodeNasabah || !saldoNasabah || !biayaAdmin) return error({ message: "Masukan input yang benar" }, req.originalUrl, 402, res);
+      
+      const kodeTariksaldo: string = randomKodeNumberSampah("KTS-")
+      const kodeInvoice: string = randomKodeNumberSampah("KNI-");
+
+      if(pin === kodeNasabah!["pin"]){
+        let status = false
+
+        if(saldoNasabah[0]["saldo"]! > 10000 && jumlah_penarikan <= saldoNasabah[0]["saldo"]! ){
+            const saldoAkhir =  saldoNasabah[0]["saldo"]! - jumlah_penarikan - biayaAdmin[0]["harga"]!;
+
+            await TarikSaldoNasabahs.create({
+                kode_tariksaldo:kodeTariksaldo,
+                nomor_invoice:kodeInvoice,
+                jumlah_penarikan,
+                saldo_akhir:saldoAkhir,
+                status,
+                kode_nasabah:kodeNasabah["kode_nasabah"],
+                kode_admin:kode_admin,
+                kode_biaya_admin:biayaAdmin[0]["harga"]!,
+            });
+
+            await DetailSampahNasabahs.update({
+                saldo: saldoAkhir,
+            }, {
+                where:{
+                    kode_nasabah:kode_nasabah
+                }
+            });
+
+            await DetailSampahBs.update({
+                saldo: saldoAkhir,
+            }, {
+                where:{
+                    kode_admin:kode_admin
+                }
+            });
+        } else{
+            error({ message: "Saldo Tidak Mencukupi" }, req.originalUrl, 402, res);
+        }
+
+      } else {
+        error({ message: "Pin Tidak Cocok" }, req.originalUrl, 402, res);
+      }
+
+    success({} , "Succes Tarik Saldo!", res);
+    } catch (err:any) {
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+  async riwayatPenarikanSaldo(req: Request, res: Response) {
+    try {
+      const rows = await TarikSaldoNasabahs.findAll({
+        attributes:['nomor_invoice','jumlah_penarikan', 'status', 'createdAt'],
+        include:[
+          {model:Biayaadmins}
+        ],
+
+      });
+      success({rows}, "Datas Admin By Kode Admin", res);
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+}
+
+export default TransaksiTarikSaldoController;

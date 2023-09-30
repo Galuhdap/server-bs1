@@ -1,0 +1,48 @@
+import { BelongsTo, DataTypes, Model, Optional } from "sequelize";
+
+import connection from "../../config/dbConnect";
+
+interface JenisSampahKeringsAttributes {
+  kode_sampah?: string;
+  jenis_sampah?: string | null;
+
+  createdAt?: Date;
+  updateAt?: Date;
+}
+
+export interface JenisSampahKeringsInput
+  extends Optional<JenisSampahKeringsAttributes, "kode_sampah"> {}
+export interface JenisSampahKeringsOutput
+  extends Required<JenisSampahKeringsAttributes> {}
+
+class JenisSampahKerings
+  extends Model<JenisSampahKeringsAttributes, JenisSampahKeringsInput>
+  implements JenisSampahKeringsAttributes
+{
+  kode_sampah!: string;
+  jenis_sampah!: string | null;
+
+  public readonly createdAt!: Date;
+  public readonly updateAt!: Date;
+}
+
+JenisSampahKerings.init(
+  {
+    kode_sampah: {
+      allowNull: false,
+      unique: true,
+      primaryKey: true,
+      type: DataTypes.STRING,
+    },
+    jenis_sampah: {
+      type: DataTypes.STRING,
+    },
+  },
+  {
+    timestamps: true,
+    sequelize: connection,
+    underscored: false,
+  }
+);
+
+export default JenisSampahKerings;
