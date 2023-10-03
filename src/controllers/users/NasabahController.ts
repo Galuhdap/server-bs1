@@ -10,12 +10,13 @@ class NasabahController extends Routers {
   constructor() {
     super();
     this.router.get("/nasabah", this.getAllNasabah.bind(this));
+    this.router.get("/nasabahByid", this.getNasabahById.bind(this));
   }
 
   async getAllNasabah(req: Request, res: Response) {
     try {
       const row = await Nasabah.findAll();
-      success({row}, "Datas Sampah Admin", res);
+      success({row}, "Datas Sampah Nasabah", res);
     } catch (err: any) {
       console.log(err);
       error({ error: err.message }, req.originalUrl, 403, res);
@@ -24,10 +25,14 @@ class NasabahController extends Routers {
 
   async getNasabahById(req: Request, res: Response) {
     try {
-      const { kodeNasabah } = req.body;
-      const row = await Nasabah.findByPk(kodeNasabah);
+      const { kode_nasabah } = req.body;
+      const row = await Nasabah.findAll({
+        where: {
+          kode_nasabah
+        }
+      });
 
-      success({row}, "Datas Sampah Admin", res);
+      success({row}, "Datas Sampah Nasabah", res);
     } catch (err: any) {
       console.log(err);
       error({ error: err.message }, req.originalUrl, 403, res);

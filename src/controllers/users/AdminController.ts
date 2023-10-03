@@ -19,11 +19,10 @@ class AdminController extends Routers {
     super();
     this.router.get(
       "/admin",
-      this.verfyJwt.verifyToken,
       this.getAllAdmin.bind(this)
     );
     this.router.get("/cek/sampah/admin", this.cekSampahAdmin.bind(this));
-    this.router.get("/admin/:id", this.getAdminById.bind(this));
+    this.router.get("/adminbyid", this.getAdminById.bind(this));
   }
 
   async getAllAdmin(req: Request, res: Response) {
@@ -38,8 +37,12 @@ class AdminController extends Routers {
 
   async getAdminById(req: Request, res: Response) {
     try {
-      const { kode_admin } = req.params;
-      const row = await Admin.findByPk(kode_admin);
+      const { kode_admin } = req.body;
+      const row = await Admin.findAll({
+        where: {
+          kode_admin: kode_admin
+        }
+      })
       success({row}, "Datas Admin By Kode Admin", res);
     } catch (err: any) {
       console.log(err);
