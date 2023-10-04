@@ -12,6 +12,7 @@ interface NasabahAttributes {
   alamat?: string | null,
   pin?: string | null,
   kode_user?: string | null,
+  kode_admin?: string | null,
 
   createdAt?: Date,
   updateAt?: Date
@@ -29,6 +30,7 @@ class Nasabah extends Model<NasabahAttributes, NasabahInput> implements NasabahA
   alamat!: string | null;
   pin!: string | null;
   kode_user!: string | null;
+  kode_admin!: string | null;
 
   public readonly createdAt!: Date;
   public readonly updateAt!: Date;
@@ -62,6 +64,10 @@ Nasabah.init({
     type: DataTypes.TEXT
   },
   kode_user:{
+    unique:true,
+    type: DataTypes.STRING
+  },
+  kode_admin:{
     unique:true,
     type: DataTypes.STRING
   },

@@ -30,6 +30,9 @@ module.exports = {
       kode_user: {
         type: Sequelize.STRING
       },
+      kode_admin: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

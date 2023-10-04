@@ -72,13 +72,13 @@ class AdminAuthController extends Routers {
 
   async registerNasabah(req: Request, res: Response) {
     try {
-      const { nama_nasabah,rt,  rw ,no_telp, alamat, pin,  password,} = req.body;
+      const { nama_nasabah,rt,  rw ,no_telp, alamat, pin,  password} = req.body;
 
 
       const kodeNasabah: string = randomKodeNumber("KN-", rw, rt);
       const kodeReg: string = randomKodeNumber("KR-", rw, rt);
       const kodeDetailSampah: string = randomKodeNumberSampah("KDS-");
-
+      const admins = await Admin.findAll({where: {rw:rw}});
 
       const salt: any = await bcrypt.genSalt();
       const hashPassword = await bcrypt.hash(password, salt);
@@ -91,6 +91,8 @@ class AdminAuthController extends Routers {
         role:"nasabah"
       })
 
+      
+
       const result = await Nasabah.create({
         kode_nasabah: kodeNasabah,
         nama_nasabah,
@@ -100,6 +102,7 @@ class AdminAuthController extends Routers {
         alamat,
         pin: hashPin,
         kode_user: kodeReg,
+        kode_admin:admins[0]["kode_admin"],
       });
 
       const dsn = await DetailSampahNasabahs.create({
@@ -109,6 +112,7 @@ class AdminAuthController extends Routers {
         saldo:0,
         berat_sekarang:0,
         saldo_sekarang:0,
+        kode_admin: admins[0]["kode_admin"],
       });
 
       success({user, result , dsn}, "Succes Register!", res);
@@ -163,7 +167,7 @@ class AdminAuthController extends Routers {
 
   async registerPenimbang(req: Request, res: Response) {
     try {
-        const { nama_penimbang,rt,rw, no_telp, alamat,  password } = req.body;
+        const { nama_penimbang,rt,rw, no_telp, alamat,  password, kode_admin } = req.body;
 
 
       const kodePenimbang: string = randomKodeNumber("KP-", rw , rt);

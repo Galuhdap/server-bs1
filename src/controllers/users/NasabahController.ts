@@ -15,12 +15,16 @@ class NasabahController extends Routers {
 
   async getAllNasabah(req: Request, res: Response) {
     try {
+      const {kode_admin} = req.body;
       const row = await Nasabah.findAll({
         include: [
           {
             model: DetailSampahNasabahs,
           },
         ],
+        where: {
+          kode_admin
+        }
       });
       success({row}, "Datas Sampah Nasabah", res);
     } catch (err: any) {
