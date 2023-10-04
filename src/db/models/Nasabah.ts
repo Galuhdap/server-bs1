@@ -1,6 +1,7 @@
 import {DataTypes , Model , Optional} from 'sequelize';
 
 import connection from "../../config/dbConnect"
+import DetailSampahNasabahs from './DetailSampahNasabah';
 
 interface NasabahAttributes {
   kode_nasabah?: string | null,
@@ -70,5 +71,6 @@ Nasabah.init({
   underscored:false,
 })
 
+Nasabah.hasMany(DetailSampahNasabahs, { foreignKey: 'kode_nasabah' });
 
 export default Nasabah;

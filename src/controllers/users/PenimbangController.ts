@@ -40,7 +40,7 @@ class PenimbangController extends Routers {
       const { kode_penimbang } = req.body;
       const row = await Penimbang.findAll({
         where: {
-          kode_penimbang: kode_penimbang
+          kode_penimbang
         }
       })
       success({row}, "Datas Admin By Kode Admin", res);

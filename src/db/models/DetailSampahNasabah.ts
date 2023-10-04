@@ -52,6 +52,7 @@ DetailSampahNasabahs.init(
     kode_nasabah: {
       allowNull: true,
       type: DataTypes.STRING,
+      
     },
     berat: {
       allowNull:true,
@@ -64,6 +65,7 @@ DetailSampahNasabahs.init(
     berat_sekarang: {
       allowNull: true,
       type: DataTypes.DOUBLE,
+
     },
     saldo_sekarang: {
       allowNull: true,
@@ -85,6 +87,7 @@ DetailSampahNasabahs.init(
   }
 );
 
-DetailSampahNasabahs.hasOne(Nasabah, { foreignKey: 'kode_nasabah' });
+// DetailSampahNasabahs.hasMany(Nasabah, { foreignKey: 'kode_nasabah' });
+// DetailSampahNasabahs.hasMany(Nasabah, { foreignKey: 'kode_nasabah' });
 
 export default DetailSampahNasabahs;
