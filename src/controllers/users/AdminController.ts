@@ -44,10 +44,15 @@ class AdminController extends Routers {
 
   async getAdminById(req: Request, res: Response) {
     try {
-      const { kode_admin } = req.body;
+      const {  kode_user } = req.body;
       const row = await Admin.findAll({
+        include: [
+          {
+            model: DetailSampahBs,
+          },
+        ],
         where: {
-          kode_admin: kode_admin
+          kode_user
         }
       })
       success({row}, "Datas Admin By Kode Admin", res);

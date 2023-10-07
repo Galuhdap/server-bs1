@@ -1,6 +1,7 @@
 import {DataTypes , Model , Optional} from 'sequelize';
 
 import connection from "../../config/dbConnect"
+import DetailSampahSuperAdmins from './Detailsampahsuperadmin';
 
 interface SuperAdminsAttributes {
   kode_super_admin?: string | null,
@@ -51,5 +52,6 @@ SuperAdmins.init({
   underscored:false,
 })
 
+SuperAdmins.hasMany(DetailSampahSuperAdmins, { foreignKey: 'kode_super_admin' });
 
 export default SuperAdmins;

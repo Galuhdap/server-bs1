@@ -231,7 +231,7 @@ class AdminAuthController extends Routers {
         saldo:0,
       });
 
-      success({user, result, detailsampahSuperadmin}, "Succes Register!", res);
+      success({user, result, detailsampahSuperadmin}, "Succes Register Super Admin!", res);
     } catch (err: any) {
         console.log(err);
       error({ error: err.message }, req.originalUrl, 403, res);

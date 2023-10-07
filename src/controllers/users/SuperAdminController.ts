@@ -6,6 +6,7 @@ import TarikSaldoNasabahs from "../../db/models/Tariksaldonasabah";
 import SetorSampah from "../../db/models/SetorSampahs";
 import DetailSampahNasabahs from "../../db/models/DetailSampahNasabah";
 import SuperAdmins from "../../db/models/SuperAdmin";
+import DetailSampahSuperAdmins from "../../db/models/Detailsampahsuperadmin";
 
 class SuperAdminController extends Routers {
   constructor() {
@@ -16,7 +17,14 @@ class SuperAdminController extends Routers {
 
   async getAllSuperAdmin(req: Request, res: Response) {
     try {
-      const row = await SuperAdmins.findAll();
+      const row = await SuperAdmins.findAll({
+        // include: [
+        //   {
+        //     model: DetailSampahSuperAdmins,
+        //   },
+        // ],
+      });
+      console.log(row);
       success({row}, "Datas Sampah SuAdmin", res);
     } catch (err: any) {
       console.log(err);
@@ -26,10 +34,15 @@ class SuperAdminController extends Routers {
 
   async getSuperAdminById(req: Request, res: Response) {
     try {
-      const { kode_super_admin } = req.body;
+      const { kode_user } = req.body;
       const row = await SuperAdmins.findAll({
+        include: [
+          {
+            model: DetailSampahSuperAdmins,
+          },
+        ],
         where: {
-          kode_super_admin
+          kode_user
         }
       });
 
