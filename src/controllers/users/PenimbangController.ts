@@ -12,6 +12,7 @@ import { Op } from "sequelize";
 import TarikSaldoNasabahs from "../../db/models/Tariksaldonasabah";
 import Biayaadmins from "../../db/models/Biayaadmin";
 import Penimbang from "../../db/models/Penimbang";
+import DetailSampahBs from "../../db/models/DetailSampahBS";
 
 class PenimbangController extends Routers {
   verfyJwt = new VerifyAuth();
@@ -27,8 +28,18 @@ class PenimbangController extends Routers {
 
   async getAllPenimbang(req: Request, res: Response) {
     try {
-      const row = await Penimbang.findAll();
-      success({row}, "Datas Admin", res);
+      const {kode_admin} = req.body;
+      const row = await Penimbang.findAll({
+        where: {
+          kode_admin
+        }
+      });
+      const sampah = await DetailSampahBs.findAll({
+        where: {
+          kode_admin
+        }
+      });
+      success({row, sampah}, "Datas Admin", res);
     } catch (err: any) {
       console.log(err);
       error({ error: err.message }, req.originalUrl, 403, res);
@@ -37,13 +48,19 @@ class PenimbangController extends Routers {
 
   async getPenimbangById(req: Request, res: Response) {
     try {
-      const { kode_penimbang } = req.body;
+      const { kode_user } = req.body;
       const row = await Penimbang.findAll({
         where: {
-          kode_penimbang
+          kode_user
         }
-      })
-      success({row}, "Datas Admin By Kode Admin", res);
+      });
+      console.log(row[0]['kode_admin']);
+      const sampah = await DetailSampahBs.findAll({
+        where: {
+          kode_admin: row[0]['kode_admin']
+        }
+      });
+      success({row, sampah}, "Datas Admin By Kode Admin", res);
     } catch (err: any) {
       console.log(err);
       error({ error: err.message }, req.originalUrl, 403, res);

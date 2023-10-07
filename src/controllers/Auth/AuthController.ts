@@ -24,7 +24,6 @@ class AdminAuthController extends Routers {
   constructor() {
     super();
     this.router.post("/auth/login", this.login.bind(this));
-
     this.router.post("/auth/reg/nas", this.registerNasabah.bind(this));
     this.router.post("/auth/reg/adm", this.registerAdmin.bind(this));
     this.router.post("/auth/reg/pen", this.registerPenimbang.bind(this));
@@ -90,9 +89,6 @@ class AdminAuthController extends Routers {
         password: hashPassword,
         role:"nasabah"
       })
-
-      
-
       const result = await Nasabah.create({
         kode_nasabah: kodeNasabah,
         nama_nasabah,

@@ -1,6 +1,7 @@
 import {DataTypes , Model , Optional} from 'sequelize';
 
 import connection from "../../config/dbConnect"
+import DetailSampahBs from './DetailSampahBS';
 
 interface PenimbangAttributes {
   kode_penimbang?: string | null,
@@ -71,5 +72,5 @@ Penimbang.init({
   underscored:false,
 })
 
-
+Penimbang.hasMany(DetailSampahBs, { foreignKey: 'kode_admin' });
 export default Penimbang;

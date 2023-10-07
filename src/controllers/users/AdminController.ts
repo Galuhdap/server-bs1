@@ -11,6 +11,7 @@ import JenisBarang from "../../db/models/JenisBarang";
 import { Op } from "sequelize";
 import TarikSaldoNasabahs from "../../db/models/Tariksaldonasabah";
 import Biayaadmins from "../../db/models/Biayaadmin";
+import DetailSampahBs from "../../db/models/DetailSampahBS";
 
 class AdminController extends Routers {
   verfyJwt = new VerifyAuth();
@@ -27,7 +28,13 @@ class AdminController extends Routers {
 
   async getAllAdmin(req: Request, res: Response) {
     try {
-      const row = await Admin.findAll();
+      const row = await Admin.findAll({
+        include: [
+          {
+            model: DetailSampahBs,
+          },
+        ],
+      });
       success({row}, "Datas Admin", res);
     } catch (err: any) {
       console.log(err);

@@ -35,10 +35,15 @@ class NasabahController extends Routers {
 
   async getNasabahById(req: Request, res: Response) {
     try {
-      const { kode_nasabah } = req.body;
+      const { kode_user } = req.body;
       const row = await Nasabah.findAll({
+        include: [
+          {
+            model: DetailSampahNasabahs,
+          },
+        ],
         where: {
-          kode_nasabah
+          kode_user
         }
       });
 

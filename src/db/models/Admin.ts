@@ -1,6 +1,7 @@
 import {DataTypes , Model , Optional} from 'sequelize';
 
 import connection from "../../config/dbConnect"
+import DetailSampahBs from './DetailSampahBS';
 
 interface AdminsAttributes {
   kode_admin?: string | null,
@@ -59,5 +60,5 @@ Admins.init({
   underscored:false,
 })
 
-// Admin.belongsTo(Rw, { foreignKey: 'id_rw' });
+Admins.hasMany(DetailSampahBs, { foreignKey: 'kode_admin' });
 export default Admins;

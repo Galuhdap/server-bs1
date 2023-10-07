@@ -70,6 +70,6 @@ DetailSampahBs.init(
   }
 );
 
-DetailSampahBs.hasOne(Admins, { foreignKey: 'kode_admin' });
+// DetailSampahBs.hasOne(Admins, { foreignKey: 'kode_admin' });
 
 export default DetailSampahBs;
