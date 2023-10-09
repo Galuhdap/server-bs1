@@ -1,6 +1,7 @@
 import {BelongsTo, DataTypes , Model , Optional} from 'sequelize';
 
 import connection from "../../config/dbConnect";
+import JenisSampahKerings from './JenisSamapahKerings';
 
 interface JenisBarangAttributes {
   kode_barang?: string,
@@ -8,7 +9,7 @@ interface JenisBarangAttributes {
   satuan?: number | null,
   harga_pertama?: number | null,
   harga_kedua?: number | null,
-
+  kode_sampah?: string | null;
   createdAt?: Date,
   updateAt?: Date
 }
@@ -22,6 +23,7 @@ class JenisBarang extends Model<JenisBarangAttributes, JenisBarangInput> impleme
   satuan!: number | null;
   harga_pertama!: number | null;
   harga_kedua!: number | null;
+  kode_sampah!: string | null;
 
   public readonly createdAt!: Date;
   public readonly updateAt!: Date;
@@ -47,10 +49,16 @@ JenisBarang.init({
   harga_kedua: {
     type: DataTypes.DOUBLE
   },
+  kode_sampah: {
+    type: DataTypes.STRING,
+  },
 },{
   timestamps: true,
   sequelize: connection,
   underscored:false,
 })
+
+
+
 
 export default JenisBarang;

@@ -1,6 +1,7 @@
 import { BelongsTo, DataTypes, Model, Optional } from "sequelize";
 
 import connection from "../../config/dbConnect";
+import JenisBarang from "./JenisBarang";
 
 interface JenisSampahKeringsAttributes {
   kode_sampah?: string;
@@ -44,5 +45,6 @@ JenisSampahKerings.init(
     underscored: false,
   }
 );
+JenisSampahKerings.hasMany(JenisBarang, { foreignKey: 'kode_sampah' });
 
 export default JenisSampahKerings;

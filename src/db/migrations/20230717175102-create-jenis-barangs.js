@@ -21,6 +21,9 @@ module.exports = {
       harga_kedua: {
         type: Sequelize.DOUBLE
       },
+      kode_sampah: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
