@@ -30,6 +30,9 @@ module.exports = {
       kode_user: {
         type: Sequelize.STRING
       },
+      kode_super_admin: {
+        type: Sequelize.STRING
+      }, 
       kode_admin: {
         type: Sequelize.STRING
       },

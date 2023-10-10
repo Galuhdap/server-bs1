@@ -9,6 +9,7 @@ interface AdminsAttributes {
   no_telp?: string | null,
   rt?: string | null,
   rw?: number | null,
+  kode_super_admin?: string | null,
   kode_user?: string | null,
 
   createdAt?: Date,
@@ -24,6 +25,7 @@ class Admins extends Model<AdminsAttributes, AdminsInput> implements AdminsAttri
   no_telp!: string | null;
   rt!: string | null;
   rw!: number | null;
+  kode_super_admin!: string | null;
   kode_user!: string | null;
 
   public readonly createdAt!: Date;
@@ -48,6 +50,10 @@ Admins.init({
     type: DataTypes.STRING
   },
   rw: {
+    type: DataTypes.STRING
+  },
+  kode_super_admin:{
+    unique:true,
     type: DataTypes.STRING
   },
   kode_user:{

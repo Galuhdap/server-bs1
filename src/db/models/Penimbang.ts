@@ -11,6 +11,7 @@ interface PenimbangAttributes {
   no_telp?: string | null,
   alamat?: string | null,
   kode_admin?: string | null,
+  kode_super_admin?: string | null,
   kode_user?: string | null,
 
   createdAt?: Date,
@@ -28,6 +29,7 @@ class Penimbang extends Model<PenimbangAttributes, PenimbangInput> implements Pe
   no_telp!: string | null;
   alamat!: string | null;
   kode_admin!: string | null;
+  kode_super_admin!: string | null;
   kode_user!: string | null;
 
   public readonly createdAt!: Date;
@@ -63,6 +65,10 @@ Penimbang.init({
     type: DataTypes.STRING
   },
   kode_user:{
+    unique:true,
+    type: DataTypes.STRING
+  },
+  kode_super_admin:{
     unique:true,
     type: DataTypes.STRING
   },

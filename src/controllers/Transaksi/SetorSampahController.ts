@@ -22,6 +22,7 @@ class SetorSampahController extends Routers {
     super();
 
     this.router.post("/setor/sampah", this.setorSampahNasabah.bind(this));
+    this.router.get("/setor/getsampah", this.getSetorSampahAdmin.bind(this));
     this.router.get("/setor/sampah", this.getSetorSampahId.bind(this));
     this.router.post("/setor/sampah/susut", this.setorSampahAdmin.bind(this));
   }
@@ -237,8 +238,8 @@ class SetorSampahController extends Routers {
         berat,
         harga,
         catatan,
-        kode_admin_bs: kodeAdminBS["kode_admin"],
-        kode_super_admin: kodeSuperAdmin["kode_super_admin"],
+        kode_admin_bs: kode_bs,
+        kode_super_admin: kode_super_admin,
       });
 
       const beratss = await SusutSampahAdmins.sum("berat", {
@@ -281,6 +282,33 @@ class SetorSampahController extends Routers {
         "Succes Setor Sampah!",
         res
       );
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+  async getSetorSampahAdmin(req: Request, res: Response) {
+    try {
+      const { kode_bs } = req.body;
+
+      const kodeAdminBS = await Admins.findByPk(kode_bs);
+
+      if (!kodeAdminBS)
+        return error(
+          { message: "Masukan input yang bena N" },
+          req.originalUrl,
+          402,
+          res
+        );
+
+      const rows = await SusutSampahAdmins.findAll({
+        where: {
+          kode_admin_bs: kode_bs,
+        },
+      });
+
+      success({ rows }, "Get Setor Sampah!", res);
     } catch (err: any) {
       console.log(err);
       error({ error: err.message }, req.originalUrl, 403, res);

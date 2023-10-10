@@ -99,6 +99,7 @@ class AdminAuthController extends Routers {
         pin: hashPin,
         kode_user: kodeReg,
         kode_admin:admins[0]["kode_admin"],
+        kode_super_admin:admins[0]["kode_super_admin"]
       });
 
       const dsn = await DetailSampahNasabahs.create({
@@ -120,7 +121,7 @@ class AdminAuthController extends Routers {
 
   async registerAdmin(req: Request, res: Response) {
     try {
-      const { nama_bs,rw , rt,  no_telp, password,  } = req.body;
+      const { nama_bs,rw , rt,  no_telp, password, kode_super_admin } = req.body;
 
 
       const kodeAdmin: string = randomKodeNumber("KA-", rw , rt);
@@ -143,6 +144,7 @@ class AdminAuthController extends Routers {
         rt,
         rw,
         kode_user: kodeReg,
+        kode_super_admin
       });
 
       const detailsampahBS = await DetailSampahBs.create({
@@ -163,7 +165,7 @@ class AdminAuthController extends Routers {
 
   async registerPenimbang(req: Request, res: Response) {
     try {
-        const { nama_penimbang,rt,rw, no_telp, alamat,  password, kode_admin } = req.body;
+        const { nama_penimbang,rt,rw, no_telp, alamat,  password } = req.body;
 
 
       const kodePenimbang: string = randomKodeNumber("KP-", rw , rt);
@@ -188,7 +190,8 @@ class AdminAuthController extends Routers {
         no_telp,
         alamat,
         kode_user: kodeReg,
-        kode_admin: admins[0]["kode_admin"]
+        kode_admin: admins[0]["kode_admin"],
+        kode_super_admin:admins[0]["kode_super_admin"],
       });
 
       success({user, result}, "Succes Register!", res);

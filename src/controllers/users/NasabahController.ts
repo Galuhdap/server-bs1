@@ -5,14 +5,35 @@ import error, { success } from "../../helpers/response";
 import TarikSaldoNasabahs from "../../db/models/Tariksaldonasabah";
 import SetorSampah from "../../db/models/SetorSampahs";
 import DetailSampahNasabahs from "../../db/models/DetailSampahNasabah";
+import Admins from "../../db/models/Admin";
 
 class NasabahController extends Routers {
   constructor() {
     super();
+    this.router.get("/allnasabah", this.allNasabah.bind(this));
     this.router.get("/nasabah", this.getAllNasabah.bind(this));
     this.router.get("/nasabahByid", this.getNasabahById.bind(this));
   }
 
+  async allNasabah(req: Request, res: Response) {
+    try {
+      const {kode_super_admin} = req.body;
+      const row = await Nasabah.findAll({
+        include: [
+          {
+            model: DetailSampahNasabahs,
+          },
+        ],
+        where:{
+          kode_super_admin
+        }
+      });
+      success({row}, "Datas Sampah Nasabah", res);
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
   async getAllNasabah(req: Request, res: Response) {
     try {
       const {kode_admin} = req.body;

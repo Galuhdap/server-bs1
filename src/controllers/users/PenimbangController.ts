@@ -20,12 +20,30 @@ class PenimbangController extends Routers {
   constructor() {
     super();
     this.router.get(
+      "/allpenimbang",
+      this.allPenimbang.bind(this)
+    );
+    this.router.get(
       "/penimbang",
       this.getAllPenimbang.bind(this)
     );
     this.router.get("/penimbangbyid", this.getPenimbangById.bind(this));
   }
 
+  async allPenimbang(req: Request, res: Response) {
+    try {
+      const {kode_super_admin} = req.body;
+      const row = await Penimbang.findAll({
+        where:{
+          kode_super_admin
+        }
+      });
+      success({row}, "Datas Sampah Nasabah", res);
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
   async getAllPenimbang(req: Request, res: Response) {
     try {
       const {kode_admin} = req.body;

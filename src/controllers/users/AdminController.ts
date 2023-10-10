@@ -22,10 +22,33 @@ class AdminController extends Routers {
       "/admin",
       this.getAllAdmin.bind(this)
     );
+    this.router.get(
+      "/adminid",
+      this.getAllAdminById.bind(this)
+    );
     this.router.get("/cek/sampah/admin", this.cekSampahAdmin.bind(this));
     this.router.get("/adminbyid", this.getAdminById.bind(this));
   }
 
+  async getAllAdminById(req: Request, res: Response) {
+    try {
+      const {kode_super_admin} = req.body;
+      const row = await Admin.findAll({
+        include: [
+          {
+            model: DetailSampahBs,
+          },
+        ],
+        where: {
+          kode_super_admin
+        }
+      });
+      success({row}, "Datas Admin", res);
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
   async getAllAdmin(req: Request, res: Response) {
     try {
       const row = await Admin.findAll({

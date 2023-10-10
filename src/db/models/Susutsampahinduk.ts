@@ -82,8 +82,8 @@ SusutSampahInduks.init({
   underscored:false,
 })
 
-SusutSampahInduks.belongsTo(Nasabah, { foreignKey: 'kode_nasabah' });
-SusutSampahInduks.belongsTo(Penimbang, { foreignKey: 'kode_penimbang' });
-SusutSampahInduks.belongsTo(JenisSampahKering, { foreignKey: 'kode_sampah' });
-SusutSampahInduks.belongsTo(JenisBarang, { foreignKey: 'kode_barang' });
+// SusutSampahInduks.belongsTo(Nasabah, { foreignKey: 'kode_nasabah' });
+// SusutSampahInduks.belongsTo(Penimbang, { foreignKey: 'kode_penimbang' });
+// SusutSampahInduks.belongsTo(JenisSampahKering, { foreignKey: 'kode_sampah' });
+// SusutSampahInduks.belongsTo(JenisBarang, { foreignKey: 'kode_barang' });
 export default SusutSampahInduks;

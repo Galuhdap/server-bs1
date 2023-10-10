@@ -18,9 +18,13 @@ class PenjualanSampahController extends Routers{
     constructor(){
         super();
         this.router.post("/transaksi/sampah/induk", this.penjualanSampahInduk.bind(this));
+        this.router.get("/transaksi/sampah/induk", this.getPenjualanSampahInduk.bind(this));
         this.router.post("/transaksi/sampah/susut", this.susutSampahInduk.bind(this));
+        this.router.get("/transaksi/sampah/susut", this.getSusutSampahInduk.bind(this));
         this.router.post("/transaksi/sampah/susut/induk", this.susutSampahInduk.bind(this));
     }
+
+    
 
     async penjualanSampahInduk(req: Request, res: Response) {
         try {
@@ -115,6 +119,35 @@ class PenjualanSampahController extends Routers{
           const rows = await SusutSampahAdmins.findAll({
             where:{
               kode_susut_sampah_bs:kodePenjulan
+            }
+          });
+          success({rows} , "Succes Setor Sampah!", res);
+        } catch (err:any) {
+          console.log(err);
+          error({ error: err.message }, req.originalUrl, 403, res);
+        }
+      }
+
+      async getPenjualanSampahInduk(req:Request , res:Response){
+        try {
+          const {kode_super_admin} = req.body;
+          const rows = await PenjualanSampahInduks.findAll({
+            where:{
+              kode_super_admin
+            }
+          });
+          success({rows} , "Succes Setor Sampah!", res);
+        } catch (err:any) {
+          console.log(err);
+          error({ error: err.message }, req.originalUrl, 403, res);
+        }
+      }
+      async getSusutSampahInduk(req:Request , res:Response){
+        try {
+          const {kode_super_admin} = req.body;
+          const rows = await SusutSampahInduks.findAll({
+            where:{
+              kode_super_admin
             }
           });
           success({rows} , "Succes Setor Sampah!", res);
