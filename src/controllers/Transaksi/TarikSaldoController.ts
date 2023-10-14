@@ -28,6 +28,8 @@ class TransaksiTarikSaldoController extends Routers {
       this.riwayatPenarikanSaldoAdmin.bind(this)
     );
     this.router.post("/service/biayaadmin", this.biayaAdmin.bind(this));
+    this.router.get("/service/biayaadmin", this.getBiayaAdmin.bind(this));
+    this.router.post("/service/up/biayaadmin", this.updateBiayaAdmin.bind(this));
   }
 
   async tarikSaldo(req: Request, res: Response) {
@@ -200,15 +202,49 @@ class TransaksiTarikSaldoController extends Routers {
   }
 
   async biayaAdmin(req: Request, res: Response) {
-    const { harga } = req.body;
+    const { harga, kode_super_induk } = req.body;
 
     const kodeBiayaAdmin: string = randomKodeNumberSampah("KBA-");
     const kodeBiaya: string = randomKodeNumberSampah("KA-");
     try {
       const rows = await Biayaadmins.create({
         kode_biayaAdmin: kodeBiayaAdmin,
+        kode_super_induk,
         harga,
       });
+      success({ rows }, "Create Biaya Admin", res);
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+  async getBiayaAdmin(req: Request, res: Response) {
+    const { kode_super_induk } = req.body;
+
+    try {
+      const rows = await Biayaadmins.findAll({
+        where:{
+          kode_super_induk
+        }
+      })
+      success({ rows }, "get Biaya Admin", res);
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+
+  async updateBiayaAdmin(req: Request, res: Response) {
+    const { harga, kode_biayaAdmin } = req.body;
+    try {
+      const rows = await Biayaadmins.update({
+        harga
+      },{
+        where:{
+          kode_biayaAdmin
+        }
+      })
       success({ rows }, "Create Biaya Admin", res);
     } catch (err: any) {
       console.log(err);

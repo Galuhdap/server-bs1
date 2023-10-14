@@ -26,14 +26,21 @@ class JenisBarangController extends Routers {
 
   async tambahJenisBarang(req: Request, res: Response) {
     try {
-      const { jenis_barang, satuan, harga_pertama, harga_kedua, kode_sampah } =
-        req.body;
+      const {
+        jenis_barang,
+        satuan,
+        harga_pertama,
+        harga_kedua,
+        kode_sampah,
+        kode_super_induk,
+      } = req.body;
       const kodeBarang: string = randomKodeNumberSampah("KB-");
 
       // const sampah = JenisSampahKerings.findAll({where: kode_sampah});
       // if (sampah == null) error({ error: "Sampah Tidak Ada" }, req.originalUrl, 403, res);
 
       const rows = await JenisBarang.create({
+        kode_super_induk,
         kode_barang: kodeBarang,
         jenis_barang,
         satuan,
@@ -41,6 +48,7 @@ class JenisBarangController extends Routers {
         harga_kedua,
         kode_sampah,
       });
+
       success(rows, "Create Jenis Barang!", res);
     } catch (err: any) {
       error({ error: err.message }, req.originalUrl, 403, res);
@@ -71,8 +79,7 @@ class JenisBarangController extends Routers {
 
   async hapusJenisBarang(req: Request, res: Response) {
     try {
-      const {kode_barang } =
-        req.body;
+      const { kode_barang } = req.body;
       const rows = await JenisBarang.destroy({
         where: {
           kode_barang,

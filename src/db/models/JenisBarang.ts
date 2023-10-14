@@ -10,6 +10,7 @@ interface JenisBarangAttributes {
   harga_pertama?: number | null,
   harga_kedua?: number | null,
   kode_sampah?: string | null;
+  kode_super_induk?: string | null;
   createdAt?: Date,
   updateAt?: Date
 }
@@ -24,6 +25,7 @@ class JenisBarang extends Model<JenisBarangAttributes, JenisBarangInput> impleme
   harga_pertama!: number | null;
   harga_kedua!: number | null;
   kode_sampah!: string | null;
+  kode_super_induk!: string | null;
 
   public readonly createdAt!: Date;
   public readonly updateAt!: Date;
@@ -50,6 +52,9 @@ JenisBarang.init({
     type: DataTypes.DOUBLE
   },
   kode_sampah: {
+    type: DataTypes.STRING,
+  },
+  kode_super_induk: {
     type: DataTypes.STRING,
   },
 },{

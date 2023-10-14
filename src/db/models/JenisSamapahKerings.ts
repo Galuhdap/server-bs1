@@ -6,6 +6,7 @@ import JenisBarang from "./JenisBarang";
 interface JenisSampahKeringsAttributes {
   kode_sampah?: string;
   jenis_sampah?: string | null;
+  kode_super_induk?: string | null;
 
   createdAt?: Date;
   updateAt?: Date;
@@ -22,6 +23,7 @@ class JenisSampahKerings
 {
   kode_sampah!: string;
   jenis_sampah!: string | null;
+  kode_super_induk!: string | null;
 
   public readonly createdAt!: Date;
   public readonly updateAt!: Date;
@@ -36,6 +38,9 @@ JenisSampahKerings.init(
       type: DataTypes.STRING,
     },
     jenis_sampah: {
+      type: DataTypes.STRING,
+    },
+    kode_super_induk: {
       type: DataTypes.STRING,
     },
   },

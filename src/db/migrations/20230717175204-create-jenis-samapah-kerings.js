@@ -12,6 +12,9 @@ module.exports = {
       jenis_sampah: {
         type: Sequelize.STRING
       },
+      kode_super_induk: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

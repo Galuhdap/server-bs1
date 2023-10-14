@@ -9,6 +9,9 @@ module.exports = {
         type: Sequelize.STRING
       },
       harga: {
+        type: Sequelize.INTEGER
+      },
+      kode_super_induk: {
         type: Sequelize.STRING
       },
       createdAt: {
