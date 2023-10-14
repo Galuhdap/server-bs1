@@ -1,6 +1,7 @@
 import {DataTypes , Model , Optional} from 'sequelize';
 
 import connection from "../../config/dbConnect"
+import TarikSaldoNasabahs from './Tariksaldonasabah';
 
 interface BiayaadminsAttributes {
   kode_biayaAdmin?: string | null,
@@ -28,6 +29,7 @@ Biayaadmins.init({
     primaryKey: true,
     type: DataTypes.STRING
   },
+
   harga: {
     type: DataTypes.STRING
   },
@@ -36,6 +38,5 @@ Biayaadmins.init({
   sequelize: connection,
   underscored:false,
 })
-
-
+// Biayaadmins.hasMany(TarikSaldoNasabahs,{ foreignKey: 'kode_biayaAdmin' })
 export default Biayaadmins;

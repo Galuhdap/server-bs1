@@ -5,6 +5,7 @@ import { randomKodeNumberSampah } from "../../helpers/utils";
 import error, { success } from "../../helpers/response";
 import JenisSampahKering from "../../db/models/JenisSamapahKerings";
 import JenisBarang from "../../db/models/JenisBarang";
+import { where } from "sequelize";
 
 
 class JenisSampahController extends Routers {
@@ -12,6 +13,7 @@ class JenisSampahController extends Routers {
     super();
     this.router.get("/product/sampah", this.getAllJenisSampah.bind(this));
     this.router.post("/product/sampah", this.tambahJenisSampah.bind(this));
+    this.router.post("/product/sampahedit", this.editJenisSampah.bind(this));
   }
 
   async getAllJenisSampah(req: Request, res: Response) {
@@ -44,6 +46,24 @@ class JenisSampahController extends Routers {
       error({ error: err.message }, req.originalUrl, 403, res);
     }
   }
+  async editJenisSampah(req: Request, res: Response) {
+    try {
+      const { jenis_sampah, kode_sampah} = req.body;
+    
+      const rows = await JenisSampahKering.update({
+        jenis_sampah,
+      }, {
+        where:{
+          kode_sampah
+        }
+      })
+      success(rows , "Update Jenis Sampah!", res);
+    } catch (err:any) {
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+
 }
 
 export default JenisSampahController;

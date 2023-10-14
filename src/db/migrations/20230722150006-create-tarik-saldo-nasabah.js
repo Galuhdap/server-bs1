@@ -3,9 +3,12 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('TarikSaldoNasabahs', {
-      kode_tariksaldo: {
+      kode_biaya: {
         allowNull: false,
         primaryKey: true,
+        type: Sequelize.STRING
+      },
+      kode_tariksaldo: {
         type: Sequelize.STRING
       },
       nomor_invoice: {
@@ -26,9 +29,6 @@ module.exports = {
       },
       kode_admin: {
         type: Sequelize.STRING
-      },
-      kode_biaya_admin: {
-        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,
