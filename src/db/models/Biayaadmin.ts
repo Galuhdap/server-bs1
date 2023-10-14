@@ -14,7 +14,7 @@ interface BiayaadminsAttributes {
 export interface BiayaadminsInput extends Optional<BiayaadminsAttributes, 'kode_biayaAdmin'>{}
 export interface BiayaadminsOutput extends Required<BiayaadminsAttributes>{}
 
-class Biayaadmins extends Model<BiayaadminsAttributes, BiayaadminsInput> implements BiayaadminsAttributes{
+class BiayaAdmins extends Model<BiayaadminsAttributes, BiayaadminsInput> implements BiayaadminsAttributes{
   kode_biayaAdmin!: string | null;
   harga!: number | null;
   kode_super_induk!: string | null;
@@ -22,7 +22,7 @@ class Biayaadmins extends Model<BiayaadminsAttributes, BiayaadminsInput> impleme
   public readonly updateAt!: Date;
 }
 
-Biayaadmins.init({
+BiayaAdmins.init({
 
   kode_biayaAdmin: {
     allowNull: false,
@@ -42,4 +42,4 @@ Biayaadmins.init({
   underscored:false,
 })
 // Biayaadmins.hasMany(TarikSaldoNasabahs,{ foreignKey: 'kode_biayaAdmin' })
-export default Biayaadmins;
+export default BiayaAdmins;
