@@ -123,7 +123,6 @@ class TransaksiTarikSaldoController extends Routers {
       const {kode_nasabah} = req.body;
       const rows = await TarikSaldoNasabahs.update({
         status: true,
-        
       }, 
       {
         where: {
@@ -141,6 +140,8 @@ class TransaksiTarikSaldoController extends Routers {
       const rows = await TarikSaldoNasabahs.findAll({
         attributes: [
           "nomor_invoice",
+          "kode_nasabah",
+          "kode_admin",
           "jumlah_penarikan",
           "status",
           "createdAt",
@@ -168,6 +169,7 @@ class TransaksiTarikSaldoController extends Routers {
         include: [{ model: Biayaadmins }],
         where: {
           kode_nasabah,
+          status : true
         },
       });
       success({ rows }, "Datas Admin By Kode Admin", res);
