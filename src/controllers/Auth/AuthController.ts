@@ -14,6 +14,7 @@ import Admin from './../../db/models/Admin';
 import SuperAdmins from "../../db/models/SuperAdmin";
 import DetailSampahSuperAdmins from "../../db/models/Detailsampahsuperadmin";
 import { where } from 'sequelize';
+import Tombol from "../../db/models/Tombol";
 
 
 
@@ -240,6 +241,12 @@ class AdminAuthController extends Routers {
         berat_sekarang:0,
         saldo_sekarang:0,
       });
+
+      const tomol = await Tombol.create({
+        tombol1: false,
+        kode_admin:kodeAdmin,
+        kode_super_induk:kode_super_admin
+      })
 
       success({user, result , detailsampahBS}, "Succes Register!", res);
     } catch (err: any) {
