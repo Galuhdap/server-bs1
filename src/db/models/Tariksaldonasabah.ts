@@ -11,7 +11,7 @@ interface TarikSaldoNasabahsAttributes {
   status?: boolean | null;
   kode_nasabah?: string | null;
   kode_admin?: string | null;
-  kode_biaya?: string | null;
+  kode_biayaAdmin?: string | null;
 
   createdAt?: Date;
   updateAt?: Date;
@@ -33,7 +33,7 @@ class TarikSaldoNasabahs
   status!: boolean | null;
   kode_nasabah!: string | null;
   kode_admin!: string | null;
-  kode_biaya!: string | null;
+  kode_biayaAdmin!: string | null;
 
   public readonly createdAt!: Date;
   public readonly updateAt!: Date;
@@ -41,12 +41,12 @@ class TarikSaldoNasabahs
 
 TarikSaldoNasabahs.init(
   {
-    kode_biaya: {
-      allowNull: false,
-      primaryKey: true,
+    kode_biayaAdmin: {
       type: DataTypes.STRING,
     },
     kode_tariksaldo: {
+      allowNull: false,
+      primaryKey: true,
       type: DataTypes.STRING,
     },
     nomor_invoice: {
@@ -76,6 +76,6 @@ TarikSaldoNasabahs.init(
   }
 );
 
-TarikSaldoNasabahs.hasMany(Biayaadmins, { foreignKey: "kode_biayaAdmin" });
+TarikSaldoNasabahs.belongsTo(Biayaadmins, { foreignKey: 'kode_biayaAdmin' });
 
 export default TarikSaldoNasabahs;

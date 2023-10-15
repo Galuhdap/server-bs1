@@ -3,12 +3,12 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('TarikSaldoNasabahs', {
-      kode_biaya: {
-        allowNull: false,
-        primaryKey: true,
+      kode_biayaAdmin: {
         type: Sequelize.STRING
       },
       kode_tariksaldo: {
+        allowNull: false,
+        primaryKey: true,
         type: Sequelize.STRING
       },
       nomor_invoice: {
