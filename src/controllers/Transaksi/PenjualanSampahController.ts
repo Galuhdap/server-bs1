@@ -64,7 +64,7 @@ class PenjualanSampahController extends Routers{
 
     async susutSampahInduk(req: Request, res: Response) {
         try {
-          const { kode_sampah, kode_barang, berat, harga ,catatan, kode_super_admin } = req.body;
+          const { kode_sampah, kode_barang, berat, harga ,catatan, kode_super_admin, nama_pembeli } = req.body;
   
           const kodeSuperAdmin = await SuperAdmins.findByPk(kode_super_admin);
           const kodeBarang = await JenisBarang.findByPk(kode_barang);
@@ -88,24 +88,29 @@ class PenjualanSampahController extends Routers{
             total,
             catatan,
             kode_super_admin:kodeSuperAdmin["kode_super_admin"],
+            nama_pembeli
           });
 
-          const beratSampahInduk = await DetailSampahSuperAdmins.sum("berat",{where:{kode_super_admin:kodeSuperAdmin["kode_super_admin"],}})
+          const admin = await DetailSampahSuperAdmins.findAll({
+            where:{
+              kode_super_admin
+            }
+          })
 
-          const susutBerat = beratSampahInduk - berat;
-          
-          const saldo = await SusutSampahInduks.sum("total" , {where:{kode_super_admin:kodeSuperAdmin["kode_super_admin"],}})
+          const _berat = admin[0]["berat"]! - berat;
+          const _total = admin[0]["saldo"]! + total;
+
 
           const updateSusutSampah = await DetailSampahSuperAdmins.update({
-            berat:susutBerat,
-            saldo:saldo,
+            berat:_berat,
+            saldo:_total,
           }, {
             where:{
               kode_super_admin:kodeSuperAdmin["kode_super_admin"],
             }
           })
 
-          success({rows} , "Succes Setor Sampah!", res);
+          success({rows} , "Succes Jual Sampah!", res);
         } catch (err:any) {
           console.log(err);
           error({ error: err.message }, req.originalUrl, 403, res);

@@ -13,6 +13,8 @@ import JenisSampahKerings from "../../db/models/JenisSamapahKerings";
 import TarikSaldoNasabahs from "../../db/models/Tariksaldonasabah";
 import Biayaadmins from "../../db/models/Biayaadmin";
 import Tombol from "../../db/models/Tombol";
+import DetailSampahSuperAdmins from "../../db/models/Detailsampahsuperadmin";
+import TarikSaldoAdmins from "../../db/models/Tariksaldoadmin";
 
 class TransaksiTarikSaldoController extends Routers {
   constructor() {
@@ -20,11 +22,14 @@ class TransaksiTarikSaldoController extends Routers {
     this.router.get("/tombol/admin", this.cekStatusTombolAdmin.bind(this));
     this.router.post("/tombol/admin", this.selectTombolAdmin.bind(this));
     this.router.post("/service/saldo", this.tarikSaldo.bind(this));
+    this.router.post("/service/saldo/admin", this.tarikSaldoAdmin.bind(this));
     this.router.post(
       "/service/validasi",
       this.validasiPenarikanSaldo.bind(this)
     );
     this.router.get("/service/cek", this.riwayatPenarikanSaldo.bind(this));
+    this.router.get("/service/cek/admin", this.cekPenarikanSaldoAdmin.bind(this));
+    this.router.get("/service/cek/induk", this.cekPenarikanSaldoInduk.bind(this));
     this.router.get(
       "/service/ceknasabah",
       this.riwayatPenarikanSaldoNasabah.bind(this)
@@ -77,8 +82,7 @@ class TransaksiTarikSaldoController extends Routers {
           jumlah_penarikan -
           biayaAdmin[0]["harga"]!;
 
-        const saldoAkhirBs =
-          saldoBS[0]["saldo"]! - saldoAkhir;
+        const saldoAkhirBs = saldoBS[0]["saldo"]! - saldoAkhir;
 
         console.log(saldoAkhir);
         await TarikSaldoNasabahs.create({
@@ -91,8 +95,6 @@ class TransaksiTarikSaldoController extends Routers {
           kode_nasabah: kodeNasabah["kode_nasabah"],
           kode_admin: kode_admin,
         });
-
-
       } else {
         error({ message: "Pin Tidak Cocok" }, req.originalUrl, 402, res);
       }
@@ -104,9 +106,78 @@ class TransaksiTarikSaldoController extends Routers {
     }
   }
 
+  async tarikSaldoAdmin(req: Request, res: Response) {
+    try {
+      const { kode_invoice, jumlah_penarikan, kode_super_admin, kode_admin } =
+        req.body;
+
+      let status = false;
+      const kodeTariksaldo: string = randomKodeNumberSampah("KTS-");
+      const saldoAdmin = await DetailSampahBs.findAll({
+        where: {
+          kode_admin,
+        },
+      });
+
+      const saldoSuperAdmin = await DetailSampahSuperAdmins.findAll({
+        where: {
+          kode_super_admin,
+        },
+      });
+      const biayaAdmin = await Biayaadmins.findAll();
+
+      const saldoAkhir =
+        saldoAdmin[0]["saldo_sekarang"]! - jumlah_penarikan - biayaAdmin[0]["harga"]!;
+
+      const saldoAkhirSuperAdmin =
+        saldoSuperAdmin[0]["saldo"]! -
+        jumlah_penarikan -
+        biayaAdmin[0]["harga"]!;
+
+      await TarikSaldoAdmins.create({
+        kode_biayaAdmin: biayaAdmin[0]["kode_biayaAdmin"]!,
+        kode_tariksaldo: kodeTariksaldo,
+        nomor_invoice: kode_invoice,
+        jumlah_penarikan,
+        saldo_akhir: saldoAkhir,
+        status,
+        kode_super_admin,
+        kode_admin: kode_admin,
+      });
+
+      await DetailSampahBs.update(
+        {
+          saldo_sekarang: saldoAkhir,
+        },
+        {
+          where: {
+            kode_admin: kode_admin,
+          },
+        }
+      );
+
+      await DetailSampahSuperAdmins.update(
+        {
+          saldo: saldoAkhirSuperAdmin,
+        },
+        {
+          where: {
+            kode_super_admin,
+          },
+        }
+      );
+
+      success({}, "Succes Tarik Saldo Admin!", res);
+    } catch (err: any) {
+      console.log(err.message);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
   async validasiPenarikanSaldo(req: Request, res: Response) {
     try {
-      const {jumlah_penarikan, nomor_invoice, kode_admin , kode_nasabah } = req.body;
+      const { jumlah_penarikan, nomor_invoice, kode_admin, kode_nasabah } =
+        req.body;
       const saldoNasabah = await DetailSampahNasabahs.findAll({
         where: {
           kode_nasabah: kode_nasabah,
@@ -120,12 +191,10 @@ class TransaksiTarikSaldoController extends Routers {
       const biayaAdmin = await Biayaadmins.findAll();
 
       const saldoAkhir =
-      saldoNasabah[0]["saldo"]! -
-      jumlah_penarikan -
-      biayaAdmin[0]["harga"]!;
+        saldoNasabah[0]["saldo"]! - jumlah_penarikan - biayaAdmin[0]["harga"]!;
 
-    const saldoAkhirBs =
-      saldoBS[0]["saldo"]! - saldoAkhir;
+      const saldoAkhirBs =
+        saldoBS[0]["saldo"]! - jumlah_penarikan - biayaAdmin[0]["harga"]!;
 
       const rows = await TarikSaldoNasabahs.update(
         {
@@ -232,6 +301,54 @@ class TransaksiTarikSaldoController extends Routers {
     }
   }
 
+  async cekPenarikanSaldoAdmin(req: Request, res: Response) {
+    try {
+      const { kode_admin } = req.body;
+      const rows = await TarikSaldoAdmins.findAll({
+        attributes: [
+          "nomor_invoice",
+          "kode_super_admin",
+          "kode_admin",
+          "jumlah_penarikan",
+          "status",
+          "createdAt",
+        ],
+        include: [{ model: Biayaadmins }],
+        where: {
+          kode_admin,
+        },
+      });
+      success({ rows }, "Datas Admin By Kode Admin", res);
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+  async cekPenarikanSaldoInduk(req: Request, res: Response) {
+    try {
+      const { kode_super_admin } = req.body;
+      const rows = await TarikSaldoAdmins.findAll({
+        attributes: [
+          "nomor_invoice",
+          "kode_super_admin",
+          "kode_admin",
+          "jumlah_penarikan",
+          "status",
+          "createdAt",
+        ],
+        include: [{ model: Biayaadmins }],
+        where: {
+          kode_super_admin
+        },
+      });
+      success({ rows }, "Datas Admin By Kode Admin", res);
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
   async biayaAdmin(req: Request, res: Response) {
     const { harga, kode_super_induk } = req.body;
 
@@ -288,13 +405,16 @@ class TransaksiTarikSaldoController extends Routers {
   async selectTombolAdmin(req: Request, res: Response) {
     const { tombol1, kode_admin } = req.body;
     try {
-      const rows = await Tombol.update({
-        tombol1
-      }, {
-        where:{
-          kode_admin
+      const rows = await Tombol.update(
+        {
+          tombol1,
+        },
+        {
+          where: {
+            kode_admin,
+          },
         }
-      })
+      );
       success({ rows }, "Tombol Admin", res);
     } catch (err: any) {
       console.log(err);
@@ -302,13 +422,13 @@ class TransaksiTarikSaldoController extends Routers {
     }
   }
   async cekStatusTombolAdmin(req: Request, res: Response) {
-    const {kode_admin } = req.body;
+    const { kode_admin } = req.body;
     try {
       const rows = await Tombol.findAll({
-        where:{
-          kode_admin
-        }
-      })
+        where: {
+          kode_admin,
+        },
+      });
       success({ rows }, "Tombol Admin", res);
     } catch (err: any) {
       console.log(err);
