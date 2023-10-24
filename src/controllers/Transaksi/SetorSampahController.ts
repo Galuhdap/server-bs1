@@ -23,10 +23,17 @@ class SetorSampahController extends Routers {
 
     this.router.post("/setor/sampah", this.setorSampahNasabah.bind(this));
     this.router.get("/setor/getsampah", this.getSetorSampahAdmin.bind(this));
-    this.router.get("/setor/getsampah/induk", this.getSetorSampahAdminByInduk.bind(this));
-    this.router.get("/setor/getsampah/nas", this.getSetorSampahNasabah.bind(this));
+    this.router.get(
+      "/setor/getsampah/induk",
+      this.getSetorSampahAdminByInduk.bind(this)
+    );
+    this.router.get(
+      "/setor/getsampah/nas",
+      this.getSetorSampahNasabah.bind(this)
+    );
     this.router.get("/setor/sampah", this.getSetorSampahId.bind(this));
     this.router.post("/setor/sampah/susut", this.setorSampahAdmin.bind(this));
+    this.router.get("/setor/sampah/search", this.searchSetorSampahAdminByInduk.bind(this));
   }
 
   async getSetorSampahId(req: Request, res: Response) {
@@ -69,6 +76,7 @@ class SetorSampahController extends Routers {
         kode_nasabah,
         kode_penimbang,
         kode_admin,
+        kode_super_admin
       } = req.body;
 
       const kodeNasabah = await Nasabah.findByPk(kode_nasabah);
@@ -109,6 +117,7 @@ class SetorSampahController extends Routers {
         kode_nasabah: kodeNasabah!["kode_nasabah"],
         kode_penimbang: kodePenimbang!["kode_penimbang"],
         kode_admin: kodeAdmins!["kode_admin"],
+        kode_super_admin,
       });
 
       const bers = await SetorSampah.sum("berat", {
@@ -126,22 +135,22 @@ class SetorSampahController extends Routers {
 
       const ceksaldo = berat * kodeBarang!["harga_pertama"]!;
       const saldos = await DetailSampahNasabahs.findAll({
-        where:{
-          kode_nasabah
-        }
-      })
+        where: {
+          kode_nasabah,
+        },
+      });
 
       const cekBeratAdmins = await DetailSampahBs.findAll({
-        where:{
-         kode_admin
-        }
-      })
+        where: {
+          kode_admin,
+        },
+      });
 
       const totals = saldos[0]["saldo"]! + total;
 
       const _beratAdmin = cekBeratAdmins[0]["berat"]! + berat;
 
-     // validasi jika datetime sudah berubah hari maka , berat sekarang dan saldo sekarang akan reset menjadi 0
+      // validasi jika datetime sudah berubah hari maka , berat sekarang dan saldo sekarang akan reset menjadi 0
 
       const updateSampahNasabah = await DetailSampahNasabahs.update(
         {
@@ -194,11 +203,7 @@ class SetorSampahController extends Routers {
         }
       );
 
-      success(
-        { rows },
-        "Succes Setor Sampah!",
-        res
-      );
+      success({ rows }, "Succes Setor Sampah!", res);
     } catch (err: any) {
       console.log(err);
       error({ error: err.message }, req.originalUrl, 403, res);
@@ -279,22 +284,21 @@ class SetorSampahController extends Routers {
         where: { kode_admin: kodeAdminBS!["kode_admin"] },
       });
 
-
       const berats = cek - berat;
 
       const bs = await DetailSampahBs.findAll({
-        where:{
-          kode_admin
-        }
-      })
+        where: {
+          kode_admin,
+        },
+      });
 
       const admin = await DetailSampahSuperAdmins.findAll({
-        where:{
-          kode_super_admin
-        }
-      })
+        where: {
+          kode_super_admin,
+        },
+      });
 
-      const cekBerat = bs[0]["berat"]! - berat; 
+      const cekBerat = bs[0]["berat"]! - berat;
       const saldo = bs[0]["saldo"]! + harga;
       const _saldo = bs[0]["saldo_sekarang"]! + harga;
 
@@ -304,7 +308,7 @@ class SetorSampahController extends Routers {
         {
           berat: cekBerat,
           saldo: saldo,
-          saldo_sekarang: _saldo
+          saldo_sekarang: _saldo,
         },
         {
           where: {
@@ -313,10 +317,9 @@ class SetorSampahController extends Routers {
         }
       );
 
-        
       const updateSampahInduk = await DetailSampahSuperAdmins.update(
         {
-          berat: cekberatAdmin ,
+          berat: cekberatAdmin,
         },
         {
           where: {
@@ -379,9 +382,49 @@ class SetorSampahController extends Routers {
 
       const rows = await SusutSampahAdmins.findAll({
         where: {
-          kode_super_admin
+          kode_super_admin,
         },
       });
+
+      success({ rows }, "Get Setor Sampah!", res);
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+  async searchSetorSampahAdminByInduk(req: Request, res: Response) {
+    try {
+      const { kode_super_admin, nilai_yang_dicari } = req.body;
+
+      const kodeAdminBS = await SuperAdmins.findByPk(kode_super_admin);
+
+      if (!kodeAdminBS)
+        return error(
+          { message: "Masukan input yang bena N" },
+          req.originalUrl,
+          402,
+          res
+        );
+
+      const rows = await SusutSampahAdmins.findAll({
+        where: {
+         kode_super_admin,
+          [Op.or]: [
+            {
+              kode_susut_sampah_bs: {
+                [Op.like]: ''
+              }
+            },
+            {
+              kode_susut_sampah_bs: {
+                [Op.is]: null // Ini akan mencocokkan semua baris di mana kode_susut_sampah_bs adalah NULL
+              }
+            }
+          ],
+        },
+      });
+
+      // await SusutSampahAdmins.sequelize?.query('SELECT * FROM ')
 
       success({ rows }, "Get Setor Sampah!", res);
     } catch (err: any) {

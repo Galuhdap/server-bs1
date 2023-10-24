@@ -8,6 +8,7 @@ import { AuthIndex } from './controllers/Auth/IndexAuth';
 import { TransaksiIndex } from './controllers/Transaksi/IndexTransaksi';
 import { SampahIndex } from './controllers/Sampah/IndexSampah';
 import { UserIndex } from './controllers/users/IndexUsers';
+import { LaporanIndex } from './controllers/LaporanSemua/IndexSampah';
 
 
 
@@ -26,6 +27,7 @@ app.use(AuthIndex());
 app.use(SampahIndex());
 app.use(TransaksiIndex());
 app.use(UserIndex());
+app.use(LaporanIndex());
 app.use(new VerifyAuth().router);
 
 

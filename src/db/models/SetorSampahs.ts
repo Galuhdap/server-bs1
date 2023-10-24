@@ -14,6 +14,7 @@ interface SetorSampahAttributes {
   kode_nasabah?: string | null,
   kode_admin?: string | null,
   kode_penimbang?: string | null,
+  kode_super_admin?: string | null,
   kode_sampah?: string | null,
   kode_barang?: string | null,
 
@@ -32,6 +33,7 @@ class SetorSampah extends Model<SetorSampahAttributes, SetorSampahInput> impleme
   kode_nasabah!: string | null;
   kode_admin!: string | null;
   kode_penimbang!: string | null;
+  kode_super_admin!: string | null;
   kode_sampah!: string | null;
   kode_barang!: string | null;
 
@@ -65,6 +67,10 @@ SetorSampah.init({
     type: DataTypes.STRING
   },
   kode_penimbang: {
+    allowNull: true,
+    type: DataTypes.STRING
+  },
+  kode_super_admin: {
     allowNull: true,
     type: DataTypes.STRING
   },
