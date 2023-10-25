@@ -48,7 +48,7 @@ class TransaksiTarikSaldoController extends Routers {
 
   async tarikSaldo(req: Request, res: Response) {
     try {
-      const { kode_invoice, jumlah_penarikan, pin, kode_nasabah, kode_admin } =
+      const { kode_invoice, jumlah_penarikan, pin, kode_nasabah, kode_admin , kode_super_admin} =
         req.body;
 
       const kodeNasabah = await Nasabah.findByPk(kode_nasabah);
@@ -84,7 +84,7 @@ class TransaksiTarikSaldoController extends Routers {
 
         const saldoAkhirBs = saldoBS[0]["saldo"]! - saldoAkhir;
 
-        console.log(saldoAkhir);
+
         await TarikSaldoNasabahs.create({
           kode_biayaAdmin: biayaAdmin[0]["kode_biayaAdmin"]!,
           kode_tariksaldo: kodeTariksaldo,
@@ -94,6 +94,7 @@ class TransaksiTarikSaldoController extends Routers {
           status,
           kode_nasabah: kodeNasabah["kode_nasabah"],
           kode_admin: kode_admin,
+          kode_super_admin
         });
       } else {
         error({ message: "Pin Tidak Cocok" }, req.originalUrl, 402, res);

@@ -12,6 +12,7 @@ interface TarikSaldoNasabahsAttributes {
   kode_nasabah?: string | null;
   kode_admin?: string | null;
   kode_biayaAdmin?: string | null;
+  kode_super_admin?: string | null;
 
   createdAt?: Date;
   updateAt?: Date;
@@ -34,6 +35,7 @@ class TarikSaldoNasabahs
   kode_nasabah!: string | null;
   kode_admin!: string | null;
   kode_biayaAdmin!: string | null;
+  kode_super_admin!: string | null;
 
   public readonly createdAt!: Date;
   public readonly updateAt!: Date;
@@ -66,6 +68,9 @@ TarikSaldoNasabahs.init(
       type: DataTypes.STRING,
     },
     kode_admin: {
+      type: DataTypes.STRING,
+    },
+    kode_super_admin: {
       type: DataTypes.STRING,
     },
   },

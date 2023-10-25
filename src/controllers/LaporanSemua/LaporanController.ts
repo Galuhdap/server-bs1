@@ -61,6 +61,10 @@ class LaporanController extends Routers {
       "/laporan/sampah/induk",
       this.totalSampahInduk.bind(this)
     );
+    this.router.get(
+      "/laporan/totalsampah/induk",
+      this.totalSemuaSampahInduk.bind(this)
+    );
     this.router.get("/laporan/pengguna/admin", this.totalPengunaAdmin.bind(this));
     this.router.get("/laporan/nasabah/admin", this.totalNasabahBS.bind(this));
     this.router.get("/laporan/penimbang/admin", this.totalPenimbangBS.bind(this));
@@ -70,6 +74,7 @@ class LaporanController extends Routers {
     this.router.get("/laporan/sampahmasuk/admin", this.totalSampahMasukAdmin.bind(this));
     this.router.get("/laporan/sampahnasabah/admin", this.totalSampahNasabahAdmin.bind(this));
     this.router.get("/laporan/sampah/admin", this.totalSampahAdmin.bind(this));
+    this.router.get("/laporan/totalsampah/admin", this.totalSemuaSampahAdmin.bind(this));
   }
 
   
@@ -297,6 +302,55 @@ class LaporanController extends Routers {
         }
       })
       success(rows, "Total Sampah Masuk Admin!", res);
+    } catch (err: any) {
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+  async totalSemuaSampahInduk(req: Request, res: Response) {
+    try {
+      const { kode_super_admin } = req.body;
+      const rows = await SetorSampah.sum('berat',{
+        where:{
+            kode_super_admin
+        }
+      });
+      const rows2 = await SusutSampahAdmins.sum('berat',{
+        where:{
+            kode_super_admin
+        }
+      });
+      const rows3 = await SusutSampahInduks.sum('berat',{
+        where:{
+            kode_super_admin
+        }
+      })
+
+      var totals = rows + rows2 + rows3;
+
+      success(totals, "Total Sampah Induk!", res);
+    } catch (err: any) {
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+  async totalSemuaSampahAdmin(req: Request, res: Response) {
+    try {
+      const { kode_super_admin } = req.body;
+      const rows = await SetorSampah.sum('berat',{
+        where:{
+            kode_super_admin
+        }
+      });
+      const rows2 = await SusutSampahAdmins.sum('berat',{
+        where:{
+            kode_super_admin
+        }
+      });
+
+      var totals = rows + rows2;
+
+      success(totals, "Total Sampah Admmin!", res);
     } catch (err: any) {
       error({ error: err.message }, req.originalUrl, 403, res);
     }

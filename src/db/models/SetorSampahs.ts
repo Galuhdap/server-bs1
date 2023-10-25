@@ -17,6 +17,7 @@ interface SetorSampahAttributes {
   kode_super_admin?: string | null,
   kode_sampah?: string | null,
   kode_barang?: string | null,
+  
 
   createdAt?: Date,
   updateAt?: Date
