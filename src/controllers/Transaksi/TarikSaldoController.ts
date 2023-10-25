@@ -30,6 +30,7 @@ class TransaksiTarikSaldoController extends Routers {
     this.router.get("/service/cek", this.riwayatPenarikanSaldo.bind(this));
     this.router.get("/service/cek/admin", this.cekPenarikanSaldoAdmin.bind(this));
     this.router.get("/service/cek/induk", this.cekPenarikanSaldoInduk.bind(this));
+    this.router.get("/service/cekinduk", this.riwayatPenarikanSaldoAdminByInduk.bind(this));
     this.router.get(
       "/service/ceknasabah",
       this.riwayatPenarikanSaldoNasabah.bind(this)
@@ -293,6 +294,30 @@ class TransaksiTarikSaldoController extends Routers {
         include: [{ model: Biayaadmins }],
         where: {
           kode_admin,
+        },
+      });
+      success({ rows }, "Datas Admin By Kode Admin", res);
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+  async riwayatPenarikanSaldoAdminByInduk(req: Request, res: Response) {
+    try {
+      const { kode_super_admin } = req.body;
+      const rows = await TarikSaldoNasabahs.findAll({
+        attributes: [
+          "nomor_invoice",
+          "kode_nasabah",
+          "kode_admin",
+          "jumlah_penarikan",
+          "status",
+          "createdAt",
+        ],
+        include: [{ model: Biayaadmins }],
+        where: {
+          kode_super_admin,
         },
       });
       success({ rows }, "Datas Admin By Kode Admin", res);

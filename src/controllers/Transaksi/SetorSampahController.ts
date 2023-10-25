@@ -32,6 +32,7 @@ class SetorSampahController extends Routers {
       this.getSetorSampahNasabah.bind(this)
     );
     this.router.get("/setor/sampah", this.getSetorSampahId.bind(this));
+    this.router.get("/setor/sampah/nasabah", this.getSetorSampahNasabahByInduk.bind(this));
     this.router.post("/setor/sampah/susut", this.setorSampahAdmin.bind(this));
     this.router.get("/setor/sampah/search", this.searchSetorSampahAdminByInduk.bind(this));
   }
@@ -385,6 +386,34 @@ class SetorSampahController extends Routers {
           kode_super_admin,
         },
       });
+
+      success({ rows }, "Get Setor Sampah!", res);
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+
+  async getSetorSampahNasabahByInduk(req: Request, res: Response) {
+    try {
+      const { kode_super_admin } = req.body;
+
+      const kodeAdminBS = await SuperAdmins.findByPk(kode_super_admin);
+
+      if (!kodeAdminBS)
+        return error(
+          { message: "Masukan input yang bena N" },
+          req.originalUrl,
+          402,
+          res
+        );
+
+        const rows = await SetorSampah.findAll({
+          where: {
+            kode_super_admin
+          },
+        });
 
       success({ rows }, "Get Setor Sampah!", res);
     } catch (err: any) {
