@@ -236,9 +236,9 @@ class AdminAuthController extends Routers {
       const detailsampahBS = await DetailSampahBs.create({
         kode_detail_sampah:kodeDetailSampah,
         kode_admin:kodeAdmin,
-        berat:0,
+        berat:0.0,
         saldo:0,
-        berat_sekarang:0,
+        berat_sekarang:0.0,
         saldo_sekarang:0,
       });
 
