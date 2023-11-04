@@ -269,7 +269,6 @@ class TransaksiTarikSaldoController extends Routers {
         include: [{ model: Biayaadmins }],
         where: {
           kode_nasabah,
-          status: true,
         },
       });
       success({ rows }, "Datas Admin By Kode Admin", res);
@@ -318,7 +317,6 @@ class TransaksiTarikSaldoController extends Routers {
         include: [{ model: Biayaadmins }],
         where: {
           kode_super_admin,
-          status: true,
         },
       });
       success({ rows }, "Datas Admin By Kode Admin", res);
