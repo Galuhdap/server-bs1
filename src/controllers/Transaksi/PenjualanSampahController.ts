@@ -137,6 +137,17 @@ class PenjualanSampahController extends Routers{
         try {
           const {kode_super_admin} = req.body;
           const rows = await PenjualanSampahInduks.findAll({
+            include:[
+              {
+                model:JenisSampahKerings
+              },
+              {
+                model:JenisBarang
+              },
+              {
+                model:SuperAdmins
+              },
+            ],
             where:{
               kode_super_admin
             }
@@ -151,6 +162,17 @@ class PenjualanSampahController extends Routers{
         try {
           const {kode_super_admin} = req.body;
           const rows = await SusutSampahInduks.findAll({
+            include: [
+              {
+                model: SuperAdmins,
+              },
+              {
+                model: JenisSampahKerings,
+              },
+              {
+                model: JenisBarang,
+              },
+            ],
             where:{
               kode_super_admin
             }

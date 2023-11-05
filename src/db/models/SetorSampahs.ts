@@ -5,6 +5,8 @@ import Nasabah from './Nasabah';
 import Penimbang from './Penimbang';
 import JenisSampahKering from './JenisSamapahKerings';
 import JenisBarang from './JenisBarang';
+import Admins from './Admin';
+import SuperAdmins from './SuperAdmin';
 
 interface SetorSampahAttributes {
   kode_setor?: string | null,
@@ -93,4 +95,6 @@ SetorSampah.belongsTo(Nasabah, { foreignKey: 'kode_nasabah' });
 SetorSampah.belongsTo(Penimbang, { foreignKey: 'kode_penimbang' });
 SetorSampah.belongsTo(JenisSampahKering, { foreignKey: 'kode_sampah' });
 SetorSampah.belongsTo(JenisBarang, { foreignKey: 'kode_barang' });
+SetorSampah.belongsTo(Admins, { foreignKey: 'kode_admin' });
+SetorSampah.belongsTo(SuperAdmins, { foreignKey: 'kode_super_admin' });
 export default SetorSampah;

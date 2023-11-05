@@ -32,6 +32,10 @@ class SetorSampahController extends Routers {
       this.getSetorSampahAdminByInduk.bind(this)
     );
     this.router.get(
+      "/setor/getsampah/admin",
+      this.getSetorSampahNasabahByAdmin.bind(this)
+    );
+    this.router.get(
       "/setor/getsampah/nas",
       this.getSetorSampahNasabah.bind(this)
     );
@@ -51,8 +55,63 @@ class SetorSampahController extends Routers {
     try {
       const { kode_penimbang } = req.body;
       const row = await SetorSampah.findAll({
+        include: [
+          {
+            model: Nasabah,
+          },
+          {
+            model: Penimbang,
+          },
+          {
+            model: Admins,
+          },
+          {
+            model: SuperAdmins,
+          },
+          {
+            model: JenisSampahKerings,
+          },
+          {
+            model: JenisBarang,
+          },
+        ],
         where: {
           kode_penimbang,
+        },
+      });
+      success({ row }, "Datas Sampah Nasabah", res);
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+  async getSetorSampahNasabahByAdmin(req: Request, res: Response) {
+    try {
+      const { kode_admin } = req.body;
+      const row = await SetorSampah.findAll({
+        include: [
+          {
+            model: Nasabah,
+          },
+          {
+            model: Penimbang,
+          },
+          {
+            model: Admins,
+          },
+          {
+            model: SuperAdmins,
+          },
+          {
+            model: JenisSampahKerings,
+          },
+          {
+            model: JenisBarang,
+          },
+        ],
+        where: {
+          kode_admin,
         },
       });
       success({ row }, "Datas Sampah Nasabah", res);
@@ -66,6 +125,26 @@ class SetorSampahController extends Routers {
     try {
       const { kode_nasabah } = req.body;
       const row = await SetorSampah.findAll({
+        include: [
+          {
+            model: Nasabah,
+          },
+          {
+            model: Penimbang,
+          },
+          {
+            model: Admins,
+          },
+          {
+            model: SuperAdmins,
+          },
+          {
+            model: JenisSampahKerings,
+          },
+          {
+            model: JenisBarang,
+          },
+        ],
         where: {
           kode_nasabah,
         },
@@ -418,6 +497,20 @@ class SetorSampahController extends Routers {
         );
 
       const rows = await SusutSampahAdmins.findAll({
+        include:[
+          {
+            model: Admins,
+          },
+          {
+            model: SuperAdmins,
+          },
+          {
+            model: JenisSampahKerings,
+          },
+          {
+            model: JenisBarang,
+          },
+        ],
         where: {
           kode_admin_bs: kode_bs,
         },
@@ -445,6 +538,20 @@ class SetorSampahController extends Routers {
         );
 
       const rows = await SusutSampahAdmins.findAll({
+        include:[
+          {
+            model: Admins,
+          },
+          {
+            model: SuperAdmins,
+          },
+          {
+            model: JenisSampahKerings,
+          },
+          {
+            model: JenisBarang,
+          },
+        ],
         where: {
           kode_super_admin,
         },

@@ -5,6 +5,7 @@ import Nasabah from './Nasabah';
 import Penimbang from './Penimbang';
 import JenisSampahKering from './JenisSamapahKerings';
 import JenisBarang from './JenisBarang';
+import SuperAdmins from './SuperAdmin';
 
 interface PenjualanSampahInduksAttributes {
   kode_penjualan_induk?: string | null,
@@ -82,8 +83,7 @@ PenjualanSampahInduks.init({
   underscored:false,
 })
 
-// PenjualanSampahInduks.belongsTo(Nasabah, { foreignKey: 'kode_nasabah' });
-// PenjualanSampahInduks.belongsTo(Penimbang, { foreignKey: 'kode_penimbang' });
-// PenjualanSampahInduks.belongsTo(JenisSampahKering, { foreignKey: 'kode_sampah' });
-// PenjualanSampahInduks.belongsTo(JenisBarang, { foreignKey: 'kode_barang' });
+PenjualanSampahInduks.belongsTo(JenisSampahKering, { foreignKey: 'kode_sampah' });
+PenjualanSampahInduks.belongsTo(JenisBarang, { foreignKey: 'kode_barang' });
+PenjualanSampahInduks.belongsTo(SuperAdmins, { foreignKey: 'kode_super_admin' });
 export default PenjualanSampahInduks;
