@@ -72,7 +72,7 @@ class PenimbangController extends Routers {
           kode_user
         }
       });
-      console.log(row[0]['kode_admin']);
+
       const sampah = await DetailSampahBs.findAll({
         where: {
           kode_admin: row[0]['kode_admin']

@@ -22,6 +22,10 @@ class SetorSampahController extends Routers {
     super();
 
     this.router.post("/setor/sampah", this.setorSampahNasabah.bind(this));
+    this.router.get(
+      "/setor/sampah/hapus",
+      this.hapusSetorSampahNasabah.bind(this)
+    );
     this.router.get("/setor/getsampah", this.getSetorSampahAdmin.bind(this));
     this.router.get(
       "/setor/getsampah/induk",
@@ -32,9 +36,15 @@ class SetorSampahController extends Routers {
       this.getSetorSampahNasabah.bind(this)
     );
     this.router.get("/setor/sampah", this.getSetorSampahId.bind(this));
-    this.router.get("/setor/sampah/nasabah", this.getSetorSampahNasabahByInduk.bind(this));
+    this.router.get(
+      "/setor/sampah/nasabah",
+      this.getSetorSampahNasabahByInduk.bind(this)
+    );
     this.router.post("/setor/sampah/susut", this.setorSampahAdmin.bind(this));
-    this.router.get("/setor/sampah/search", this.searchSetorSampahAdminByInduk.bind(this));
+    this.router.get(
+      "/setor/sampah/search",
+      this.searchSetorSampahAdminByInduk.bind(this)
+    );
   }
 
   async getSetorSampahId(req: Request, res: Response) {
@@ -77,7 +87,7 @@ class SetorSampahController extends Routers {
         kode_nasabah,
         kode_penimbang,
         kode_admin,
-        kode_super_admin
+        kode_super_admin,
       } = req.body;
 
       const kodeNasabah = await Nasabah.findByPk(kode_nasabah);
@@ -205,6 +215,59 @@ class SetorSampahController extends Routers {
       );
 
       success({ rows }, "Succes Setor Sampah!", res);
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+  async hapusSetorSampahNasabah(req: Request, res: Response) {
+    try {
+      const {
+        kodeSetor,
+        berat,
+        saldo,
+        kode_nasabah,
+        kode_admin,
+      } = req.body;
+
+      const kodeNasabah = await DetailSampahNasabahs.findAll({
+        where: { kode_nasabah },
+      });
+      const kodeBs = await DetailSampahBs.findAll({
+        where: { kode_admin },
+      });
+
+      const row = SetorSampah.destroy({
+        where: {
+          kode_setor: kodeSetor,
+        },
+      });
+
+      await DetailSampahNasabahs.update(
+        {
+          berat: kodeNasabah[0]["berat"]! - berat,
+          saldo: kodeNasabah[0]["saldo"]! - saldo,
+        },
+        {
+          where: {
+            kode_nasabah,
+          },
+        }
+      );
+
+      await DetailSampahBs.update(
+        {
+          berat: kodeBs[0]["berat"]! - berat,
+        },
+        {
+          where: {
+            kode_admin,
+          },
+        }
+      );
+
+      success({ row }, "Succes Hapus Setor Sampah!", res);
     } catch (err: any) {
       console.log(err);
       error({ error: err.message }, req.originalUrl, 403, res);
@@ -394,7 +457,6 @@ class SetorSampahController extends Routers {
     }
   }
 
-
   async getSetorSampahNasabahByInduk(req: Request, res: Response) {
     try {
       const { kode_super_admin } = req.body;
@@ -409,11 +471,11 @@ class SetorSampahController extends Routers {
           res
         );
 
-        const rows = await SetorSampah.findAll({
-          where: {
-            kode_super_admin
-          },
-        });
+      const rows = await SetorSampah.findAll({
+        where: {
+          kode_super_admin,
+        },
+      });
 
       success({ rows }, "Get Setor Sampah!", res);
     } catch (err: any) {
@@ -437,18 +499,18 @@ class SetorSampahController extends Routers {
 
       const rows = await SusutSampahAdmins.findAll({
         where: {
-         kode_super_admin,
+          kode_super_admin,
           [Op.or]: [
             {
               kode_susut_sampah_bs: {
-                [Op.like]: ''
-              }
+                [Op.like]: "",
+              },
             },
             {
               kode_susut_sampah_bs: {
-                [Op.is]: null // Ini akan mencocokkan semua baris di mana kode_susut_sampah_bs adalah NULL
-              }
-            }
+                [Op.is]: null, // Ini akan mencocokkan semua baris di mana kode_susut_sampah_bs adalah NULL
+              },
+            },
           ],
         },
       });

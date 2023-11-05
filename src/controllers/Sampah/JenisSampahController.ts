@@ -11,6 +11,7 @@ class JenisSampahController extends Routers {
   constructor() {
     super();
     this.router.get("/product/sampah", this.getAllJenisSampah.bind(this));
+    this.router.get("/product/ceksampah", this.getJenisSampah.bind(this));
     this.router.get("/product/sampah/admin", this.getAllJenisSampahByAdmin.bind(this));
     this.router.post("/product/sampah", this.tambahJenisSampah.bind(this));
     this.router.post("/product/sampahedit", this.editJenisSampah.bind(this));
@@ -80,6 +81,26 @@ class JenisSampahController extends Routers {
         }
       );
       success(rows, "Update Jenis Sampah!", res);
+    } catch (err: any) {
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+  async getJenisSampah(req: Request, res: Response) {
+    const {kode_sampah} = req.body;
+    try {
+      const rows = await JenisSampahKering.findAll({
+        include: [
+          {
+            model: JenisBarang,
+          },
+        ],
+        where:{
+          kode_sampah
+        }
+      });
+
+      success(rows, "Get Jenis Sampah!", res);
     } catch (err: any) {
       error({ error: err.message }, req.originalUrl, 403, res);
     }
