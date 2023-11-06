@@ -79,7 +79,7 @@ SusutSampahAdmins.init({
 })
 
 SusutSampahAdmins.belongsTo(SuperAdmins, { foreignKey: 'kode_super_admin' });
-SusutSampahAdmins.belongsTo(Admins, { foreignKey: 'kode_super_admin' });
+SusutSampahAdmins.belongsTo(Admins, { foreignKey: 'kode_admin_bs' });
 SusutSampahAdmins.belongsTo(JenisSampahKering, { foreignKey: 'kode_sampah' });
 SusutSampahAdmins.belongsTo(JenisBarang, { foreignKey: 'kode_barang' });
 export default SusutSampahAdmins;

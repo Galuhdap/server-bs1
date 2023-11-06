@@ -15,6 +15,8 @@ import Biayaadmins from "../../db/models/Biayaadmin";
 import Tombol from "../../db/models/Tombol";
 import DetailSampahSuperAdmins from "../../db/models/Detailsampahsuperadmin";
 import TarikSaldoAdmins from "../../db/models/Tariksaldoadmin";
+import Admins from "../../db/models/Admin";
+import SuperAdmins from "../../db/models/SuperAdmin";
 
 class TransaksiTarikSaldoController extends Routers {
   constructor() {
@@ -28,9 +30,18 @@ class TransaksiTarikSaldoController extends Routers {
       this.validasiPenarikanSaldo.bind(this)
     );
     this.router.get("/service/cek", this.riwayatPenarikanSaldo.bind(this));
-    this.router.get("/service/cek/admin", this.cekPenarikanSaldoAdmin.bind(this));
-    this.router.get("/service/cek/induk", this.cekPenarikanSaldoInduk.bind(this));
-    this.router.get("/service/cekinduk", this.riwayatPenarikanSaldoAdminByInduk.bind(this));
+    this.router.get(
+      "/service/cek/admin",
+      this.cekPenarikanSaldoAdmin.bind(this)
+    );
+    this.router.get(
+      "/service/cek/induk",
+      this.cekPenarikanSaldoInduk.bind(this)
+    );
+    this.router.get(
+      "/service/cekinduk",
+      this.riwayatPenarikanSaldoAdminByInduk.bind(this)
+    );
     this.router.get(
       "/service/ceknasabah",
       this.riwayatPenarikanSaldoNasabah.bind(this)
@@ -49,8 +60,14 @@ class TransaksiTarikSaldoController extends Routers {
 
   async tarikSaldo(req: Request, res: Response) {
     try {
-      const { kode_invoice, jumlah_penarikan, pin, kode_nasabah, kode_admin , kode_super_admin} =
-        req.body;
+      const {
+        kode_invoice,
+        jumlah_penarikan,
+        pin,
+        kode_nasabah,
+        kode_admin,
+        kode_super_admin,
+      } = req.body;
 
       const kodeNasabah = await Nasabah.findByPk(kode_nasabah);
       const saldoNasabah = await DetailSampahNasabahs.findAll({
@@ -85,7 +102,6 @@ class TransaksiTarikSaldoController extends Routers {
 
         const saldoAkhirBs = saldoBS[0]["saldo"]! - saldoAkhir;
 
-
         await TarikSaldoNasabahs.create({
           kode_biayaAdmin: biayaAdmin[0]["kode_biayaAdmin"]!,
           kode_tariksaldo: kodeTariksaldo,
@@ -95,7 +111,7 @@ class TransaksiTarikSaldoController extends Routers {
           status,
           kode_nasabah: kodeNasabah["kode_nasabah"],
           kode_admin: kode_admin,
-          kode_super_admin
+          kode_super_admin,
         });
       } else {
         error({ message: "Pin Tidak Cocok" }, req.originalUrl, 402, res);
@@ -129,7 +145,9 @@ class TransaksiTarikSaldoController extends Routers {
       const biayaAdmin = await Biayaadmins.findAll();
 
       const saldoAkhir =
-        saldoAdmin[0]["saldo_sekarang"]! - jumlah_penarikan - biayaAdmin[0]["harga"]!;
+        saldoAdmin[0]["saldo_sekarang"]! -
+        jumlah_penarikan -
+        biayaAdmin[0]["harga"]!;
 
       const saldoAkhirSuperAdmin =
         saldoSuperAdmin[0]["saldo"]! -
@@ -314,7 +332,11 @@ class TransaksiTarikSaldoController extends Routers {
           "status",
           "createdAt",
         ],
-        include: [{ model: Biayaadmins }],
+        include: [
+          { model: Biayaadmins },
+          { model: Admins },
+          { model: Nasabah },
+        ],
         where: {
           kode_super_admin,
         },
@@ -362,9 +384,13 @@ class TransaksiTarikSaldoController extends Routers {
           "status",
           "createdAt",
         ],
-        include: [{ model: Biayaadmins }],
+        include: [
+          { model: Biayaadmins },
+          { model: Admins },
+          { model: SuperAdmins },
+        ],
         where: {
-          kode_super_admin
+          kode_super_admin,
         },
       });
       success({ rows }, "Datas Admin By Kode Admin", res);

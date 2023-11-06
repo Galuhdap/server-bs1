@@ -579,6 +579,26 @@ class SetorSampahController extends Routers {
         );
 
       const rows = await SetorSampah.findAll({
+        include: [
+          {
+            model: Nasabah,
+          },
+          {
+            model: Penimbang,
+          },
+          {
+            model: Admins,
+          },
+          {
+            model: SuperAdmins,
+          },
+          {
+            model: JenisSampahKerings,
+          },
+          {
+            model: JenisBarang,
+          },
+        ],
         where: {
           kode_super_admin,
         },

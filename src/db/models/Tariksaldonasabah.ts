@@ -2,6 +2,8 @@ import { DataTypes, Model, Optional } from "sequelize";
 
 import connection from "../../config/dbConnect";
 import Biayaadmins from "./Biayaadmin";
+import Nasabah from "./Nasabah";
+import Admins from "./Admin";
 
 interface TarikSaldoNasabahsAttributes {
   kode_tariksaldo?: string | null;
@@ -82,5 +84,7 @@ TarikSaldoNasabahs.init(
 );
 
 TarikSaldoNasabahs.belongsTo(Biayaadmins, { foreignKey: 'kode_biayaAdmin' });
+TarikSaldoNasabahs.belongsTo(Nasabah, { foreignKey: 'kode_nasabah' });
+TarikSaldoNasabahs.belongsTo(Admins, { foreignKey: 'kode_admin' });
 
 export default TarikSaldoNasabahs;

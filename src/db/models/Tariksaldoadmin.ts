@@ -2,6 +2,8 @@ import { DataTypes, Model, Optional } from "sequelize";
 
 import connection from "../../config/dbConnect";
 import Biayaadmins from "./Biayaadmin";
+import SuperAdmins from "./SuperAdmin";
+import Admins from "./Admin";
 
 interface TarikSaldoAdminsAttributes {
   kode_tariksaldo?: string | null;
@@ -77,5 +79,7 @@ TarikSaldoAdmins.init(
 );
 
 TarikSaldoAdmins.belongsTo(Biayaadmins, { foreignKey: 'kode_biayaAdmin' });
+TarikSaldoAdmins.belongsTo(SuperAdmins, { foreignKey: 'kode_super_admin' });
+TarikSaldoAdmins.belongsTo(Admins, { foreignKey: 'kode_admin' });
 
 export default TarikSaldoAdmins;
