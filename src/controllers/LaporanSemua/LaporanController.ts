@@ -500,7 +500,7 @@ class LaporanController extends Routers {
             "total Barang",
           ],
         ],
-        // group: ["kode_admin_bs"],
+        group: ["kode_barang"],
         include: [
           {
             model: Admins,
