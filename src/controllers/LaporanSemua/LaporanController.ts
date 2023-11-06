@@ -501,17 +501,17 @@ class LaporanController extends Routers {
           ],
         ],
         group: ["kode_admin_bs"],
-        // include: [
-        //   {
-        //     model: Admins,
-        //   },
-        //   {
-        //     model: JenisSampahKerings,
-        //   },
-        //   {
-        //     model: JenisBarang,
-        //   },
-        // ],
+        include: [
+          {
+            model: Admins,
+          },
+          {
+            model: JenisSampahKerings,
+          },
+          {
+            model: JenisBarang,
+          },
+        ],
         where: {
           kode_super_admin,
         },
