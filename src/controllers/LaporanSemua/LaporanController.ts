@@ -505,12 +505,12 @@ class LaporanController extends Routers {
           {
             model: Admins,
           },
-          {
-            model: JenisSampahKerings,
-          },
-          {
-            model: JenisBarang,
-          },
+          // {
+          //   model: JenisSampahKerings,
+          // },
+          // {
+          //   model: JenisBarang,
+          // },
         ],
         where: {
           kode_super_admin,
