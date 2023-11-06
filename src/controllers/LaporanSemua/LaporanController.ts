@@ -494,7 +494,10 @@ class LaporanController extends Routers {
       const results = await SusutSampahAdmins.findAll({
         attributes: [
           "kode_admin_bs",
-        
+          [
+            sequelizeConnection.fn("SUM", sequelizeConnection.col("berat")),
+            "total Barang",
+          ],
         ],
         group: ["kode_admin_bs"],
         where: {
