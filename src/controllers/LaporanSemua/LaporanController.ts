@@ -84,6 +84,10 @@ class LaporanController extends Routers {
       this.totalSaldoKeluarAdmin.bind(this)
     );
     this.router.get(
+      "/laporan/test",
+      this.test.bind(this)
+    );
+    this.router.get(
       "/laporan/penjualansampah/admin",
       this.totalPenjualanSampahAdmin.bind(this)
     );
@@ -451,12 +455,6 @@ class LaporanController extends Routers {
   async totalSemuaSampahBarang(req: Request, res: Response) {
     try {
       const { kode_super_admin } = req.body;
-      // const results = await SusutSampahAdmins.findAll({
-      //   group: ['kode_barang'],
-      //   where:{
-      //     kode_super_admin
-      //   }
-      // });
       const results = await SusutSampahAdmins.findAll({
         attributes: [
           "kode_admin_bs",
@@ -478,6 +476,25 @@ class LaporanController extends Routers {
           {
             model: JenisBarang,
           },
+        ],
+        group: ["kode_admin_bs"],
+        where: {
+          kode_super_admin,
+        },
+      });
+      success(results, "Total Semua Sampah BS !", res);
+    } catch (err: any) {
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+  async test(req: Request, res: Response) {
+    try {
+      const { kode_super_admin } = req.body;
+      const results = await SusutSampahAdmins.findAll({
+        attributes: [
+          "kode_admin_bs",
+        
         ],
         group: ["kode_admin_bs"],
         where: {
