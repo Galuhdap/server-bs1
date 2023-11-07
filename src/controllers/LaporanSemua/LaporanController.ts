@@ -16,6 +16,7 @@ import SetorSampah from "../../db/models/SetorSampahs";
 import { group } from "console";
 import sequelizeConnection from "../../config/dbConnect";
 import SuperAdmins from "../../db/models/SuperAdmin";
+import BiayaAdmins from "../../db/models/Biayaadmin";
 
 class LaporanController extends Routers {
   constructor() {
@@ -103,6 +104,14 @@ class LaporanController extends Routers {
     this.router.get(
       "/laporan/totalsampah/admin",
       this.totalSemuaSampahAdmin.bind(this)
+    );
+    this.router.get(
+      "/laporan/perikansaldo/admin",
+      this.riwayatPenarikanSaldoAdmin.bind(this)
+    );
+    this.router.get(
+      "/laporan/perikansaldo/induk",
+      this.riwayatPenarikanSaldoAdminByInduk.bind(this)
     );
   }
 
@@ -452,6 +461,64 @@ class LaporanController extends Routers {
     }
   }
 
+  async riwayatPenarikanSaldoAdmin(req: Request, res: Response) {
+    try {
+      const { kode_admin } = req.body;
+      const rows = await TarikSaldoNasabahs.findAll({
+        attributes: [
+          "nomor_invoice",
+          "kode_nasabah",
+          "kode_admin",
+          "jumlah_penarikan",
+          "status",
+          "createdAt",
+        ],
+        include: [
+          { model: BiayaAdmins },
+          { model: Admins },
+          { model: Nasabah },
+        ],
+        where: {
+          kode_admin,
+          status:true,
+        },
+      });
+      success({ rows }, "Datas Admin By Kode Admin", res);
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+  async riwayatPenarikanSaldoAdminByInduk(req: Request, res: Response) {
+    try {
+      const { kode_super_admin } = req.body;
+      const rows = await TarikSaldoNasabahs.findAll({
+        attributes: [
+          "nomor_invoice",
+          "kode_nasabah",
+          "kode_admin",
+          "jumlah_penarikan",
+          "status",
+          "createdAt",
+        ],
+        include: [
+          { model: BiayaAdmins},
+          { model: Admins },
+          { model: Nasabah },
+        ],
+        where: {
+          kode_super_admin,
+          status: true,
+        },
+      });
+      success({ rows }, "Datas Admin By Kode Admin", res);
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
   async totalSemuaSampahBarang(req: Request, res: Response) {
     try {
       const { kode_super_admin } = req.body;
@@ -488,6 +555,8 @@ class LaporanController extends Routers {
     }
   }
 
+  
+
   async test(req: Request, res: Response) {
     try {
       const { kode_super_admin } = req.body;
@@ -521,6 +590,8 @@ class LaporanController extends Routers {
       error({ error: err.message }, req.originalUrl, 403, res);
     }
   }
+
+
 }
 
 export default LaporanController;
