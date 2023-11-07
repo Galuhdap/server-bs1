@@ -264,7 +264,11 @@ class TransaksiTarikSaldoController extends Routers {
           "status",
           "createdAt",
         ],
-        include: [{ model: Biayaadmins }],
+        include: [
+          { model: Biayaadmins },
+          { model: Admins },
+          { model: Nasabah },
+        ],
       });
       success({ rows }, "Datas Admin By Kode Admin", res);
     } catch (err: any) {
@@ -284,7 +288,11 @@ class TransaksiTarikSaldoController extends Routers {
           "status",
           "createdAt",
         ],
-        include: [{ model: Biayaadmins }],
+        include: [
+          { model: Biayaadmins },
+          { model: Admins },
+          { model: Nasabah },
+        ],
         where: {
           kode_nasabah,
         },
@@ -308,7 +316,11 @@ class TransaksiTarikSaldoController extends Routers {
           "status",
           "createdAt",
         ],
-        include: [{ model: Biayaadmins }],
+        include: [
+          { model: Biayaadmins },
+          { model: Admins },
+          { model: Nasabah },
+        ],
         where: {
           kode_admin,
         },
@@ -360,7 +372,11 @@ class TransaksiTarikSaldoController extends Routers {
           "status",
           "createdAt",
         ],
-        include: [{ model: Biayaadmins }],
+        include: [
+          { model: Biayaadmins },
+          { model: Admins },
+          { model: SuperAdmins },
+        ],
         where: {
           kode_admin,
         },
