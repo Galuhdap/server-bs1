@@ -46,6 +46,11 @@ class TransaksiTarikSaldoController extends Routers {
       "/service/ceknasabah",
       this.riwayatPenarikanSaldoNasabah.bind(this)
     );
+
+    this.router.get(
+      "/service/totalnasabah",
+      this.totalPenarikanSaldoNasabah.bind(this)
+    );
     this.router.get(
       "/service/cekadmin",
       this.riwayatPenarikanSaldoAdmin.bind(this)
@@ -298,6 +303,22 @@ class TransaksiTarikSaldoController extends Routers {
         },
       });
       success({ rows }, "Datas Admin By Kode Admin", res);
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+  async totalPenarikanSaldoNasabah(req: Request, res: Response) {
+    try {
+      const { kode_nasabah } = req.body;
+
+      const rows = await TarikSaldoNasabahs.sum("jumlah_penarikan",{
+        where: {
+          kode_nasabah
+        }
+      });
+      success({ rows }, "Total Penarikan saldo By Kode Admin", res);
     } catch (err: any) {
       console.log(err);
       error({ error: err.message }, req.originalUrl, 403, res);

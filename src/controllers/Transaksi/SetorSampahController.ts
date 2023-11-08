@@ -39,6 +39,10 @@ class SetorSampahController extends Routers {
       "/setor/getsampah/nas",
       this.getSetorSampahNasabah.bind(this)
     );
+    this.router.get(
+      "/setor/total/nas",
+      this.totalSetorSampahNasabah.bind(this)
+    );
     this.router.get("/setor/sampah", this.getSetorSampahId.bind(this));
     this.router.get(
       "/setor/sampah/nasabah",
@@ -150,6 +154,21 @@ class SetorSampahController extends Routers {
         },
       });
       success({ row }, "Datas Sampah Nasabah", res);
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+  async totalSetorSampahNasabah(req: Request, res: Response) {
+    try {
+      const { kode_nasabah } = req.body;
+      const row = await SetorSampah.sum("total",{
+        where:{
+          kode_nasabah
+        }
+      })
+      success({ row }, "Total Setor Nasabah", res);
     } catch (err: any) {
       console.log(err);
       error({ error: err.message }, req.originalUrl, 403, res);
