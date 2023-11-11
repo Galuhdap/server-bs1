@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import Nasabah from "../../db/models/Nasabah";
 import Routers from "../RouterController";
-import error, { success } from "../../helpers/response";
+import error, { statusFalse, statusTrue, success } from "../../helpers/response";
 import TarikSaldoNasabahs from "../../db/models/Tariksaldonasabah";
 import SetorSampah from "../../db/models/SetorSampahs";
 import DetailSampahNasabahs from "../../db/models/DetailSampahNasabah";
@@ -81,7 +81,15 @@ class NasabahController extends Routers {
       const { kode_nasabah } = req.body;
       const row = await Nasabah.findByPk(kode_nasabah);
 
-      success({row}, "Datas Nasabah True", res);
+      if(!row){
+        statusFalse("Datas Nasabah False" , res);
+        return false;
+      } else {
+        statusTrue("Datas Nasabah True" , res);
+        return true;
+      }
+
+     
     } catch (err: any) {
       console.log(err);
       error({ error: err.message }, req.originalUrl, 403, res);
