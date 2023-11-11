@@ -13,6 +13,7 @@ class NasabahController extends Routers {
     this.router.get("/allnasabah", this.allNasabah.bind(this));
     this.router.get("/nasabah", this.getAllNasabah.bind(this));
     this.router.get("/nasabahByid", this.getNasabahById.bind(this));
+    this.router.get("/cek/nasabahByid", this.getNasabahByIdCek.bind(this));
   }
 
   async allNasabah(req: Request, res: Response) {
@@ -69,6 +70,18 @@ class NasabahController extends Routers {
       });
 
       success({row}, "Datas Sampah Nasabah", res);
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+  async getNasabahByIdCek(req: Request, res: Response) {
+    try {
+      const { kode_nasabah } = req.body;
+      const row = await Nasabah.findByPk(kode_nasabah);
+
+      success({row}, "Datas Nasabah True", res);
     } catch (err: any) {
       console.log(err);
       error({ error: err.message }, req.originalUrl, 403, res);

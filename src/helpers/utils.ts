@@ -1,10 +1,9 @@
-function randomKodeNumber (kode:string,rws:any, rts:any) {
+function randomKodeNumber (kode:string,rws:any) {
     const prefix = kode;
     const rw = rws;
-    const rt = rts;
     const randomNumber = Math.floor(Math.random() * 1000);
     const nomor = randomNumber.toString().padStart(4,'0');
-    return prefix + rw + rt + nomor
+    return prefix + rw + nomor
 }
 export function randomKodeNumberSampah (kode:string) {
     const prefix = kode;

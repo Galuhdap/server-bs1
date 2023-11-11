@@ -85,9 +85,9 @@ class AdminAuthController extends Routers {
       const { nama_nasabah,rt,  rw ,no_telp, alamat, pin,  password} = req.body;
 
 
-      const kodeNasabah: string = randomKodeNumber("KN-", rw, rt);
-      const kodeReg: string = randomKodeNumber("KR-", rw, rt);
-      const kodeDetailSampah: string = randomKodeNumberSampah("KDS-");
+      const kodeNasabah: string = randomKodeNumber("KN", rw);
+      const kodeReg: string = randomKodeNumber("KR", rw);
+      const kodeDetailSampah: string = randomKodeNumberSampah("KDS");
       const admins = await Admin.findAll({where: {rw:rw}});
 
       const salt: any = await bcrypt.genSalt();
@@ -210,9 +210,29 @@ class AdminAuthController extends Routers {
       const { nama_bs,rw , rt,  no_telp, password, kode_super_admin } = req.body;
 
 
-      const kodeAdmin: string = randomKodeNumber("KA-", rw , rt);
-      const kodeReg: string = randomKodeNumber("KR-", rw,rt);
-      const kodeDetailSampah: string = randomKodeNumberSampah("KDS-");
+      const kodeAdmin: string = randomKodeNumber("KA", rw);
+      const kodeReg: string = randomKodeNumber("KR", rw);
+      const kodeDetailSampah: string = randomKodeNumberSampah("KDS");
+
+      const SuperAdmin = await SuperAdmins.findByPk(kode_super_admin);
+
+      if(!SuperAdmin) return error(
+          { message: "Masukan Super Admin Dengan Tepat" },
+          req.originalUrl,
+          402,
+          res
+        );
+
+      // const row = await Admin.findAll({
+      //   where:{
+      //     kode_super_admin
+      //   }
+      // });
+
+      // if(row["rw"] === rw){
+      //   res.json({status: 200 , msg: "Nomor Rw Sudah Di gunakan"})
+      //   return;
+      // }
 
       const salt: any = await bcrypt.genSalt();
       const hashPassword = await bcrypt.hash(password, salt);
@@ -236,9 +256,9 @@ class AdminAuthController extends Routers {
       const detailsampahBS = await DetailSampahBs.create({
         kode_detail_sampah:kodeDetailSampah,
         kode_admin:kodeAdmin,
-        berat:0.0,
+        berat:0,
         saldo:0,
-        berat_sekarang:0.0,
+        berat_sekarang:0,
         saldo_sekarang:0,
       });
 
@@ -249,6 +269,7 @@ class AdminAuthController extends Routers {
       })
 
       success({user, result , detailsampahBS}, "Succes Register!", res);
+      // success({row}, "Succes Register!", res);
     } catch (err: any) {
         console.log(err);
       error({ error: err.message }, req.originalUrl, 403, res);
@@ -346,8 +367,8 @@ class AdminAuthController extends Routers {
         const { nama_penimbang,rt,rw, no_telp, alamat,  password } = req.body;
 
 
-      const kodePenimbang: string = randomKodeNumber("KP-", rw , rt);
-      const kodeReg: string = randomKodeNumber("KR-",rw , rt);
+      const kodePenimbang: string = randomKodeNumber("KP", rw);
+      const kodeReg: string = randomKodeNumber("KR",rw);
 
       const salt: any = await bcrypt.genSalt();
       const hashPassword = await bcrypt.hash(password, salt);
@@ -449,9 +470,9 @@ class AdminAuthController extends Routers {
   async registerSuperAdmin(req: Request, res: Response) {
     try {
         const { nama_super_admin,no_telp, alamat,  password } = req.body;
-      const kodeSuperAdmin: string = randomKodeNumberSampah("KSA-");
-      const kodeReg: string = randomKodeNumberSampah("KR-");
-      const kodeDetailSampah: string = randomKodeNumberSampah("KDS-");
+      const kodeSuperAdmin: string = randomKodeNumberSampah("KSA");
+      const kodeReg: string = randomKodeNumberSampah("KR");
+      const kodeDetailSampah: string = randomKodeNumberSampah("KDS");
 
       const salt: any = await bcrypt.genSalt();
       const hashPassword = await bcrypt.hash(password, salt);

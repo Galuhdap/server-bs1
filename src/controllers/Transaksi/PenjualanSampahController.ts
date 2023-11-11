@@ -39,7 +39,7 @@ class PenjualanSampahController extends Routers{
           }
     
           
-          const kodePenjualanInduk: string = randomKodeNumberSampah("KPSI-");
+          const kodePenjualanInduk: string = randomKodeNumberSampah("KP-");
 
           const total = berat * harga;
 
@@ -75,7 +75,7 @@ class PenjualanSampahController extends Routers{
           if(!kodeSampah) return error({ message: "Masukan input yang benar s " }, req.originalUrl, 402, res);
     
           
-          const kodeSusutSampah: string = randomKodeNumberSampah("KSSI-");
+          const kodeSusutSampah: string = randomKodeNumberSampah("KSI-");
     
           const total = berat * harga;
 

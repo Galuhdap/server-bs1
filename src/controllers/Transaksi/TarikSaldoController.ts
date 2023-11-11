@@ -134,13 +134,25 @@ class TransaksiTarikSaldoController extends Routers {
       const { kode_invoice, jumlah_penarikan, kode_super_admin, kode_admin } =
         req.body;
 
+       const kodeAdmin = await Admins.findByPk(kode_admin);
+       
+       if(!kodeAdmin) return error(
+        { message: "Masukan input yang benar Kode Admin" },
+        req.originalUrl,
+        402,
+        res
+      );
+
+
       let status = false;
       const kodeTariksaldo: string = randomKodeNumberSampah("KTS-");
       const saldoAdmin = await DetailSampahBs.findAll({
         where: {
-          kode_admin,
+          kode_admin
         },
       });
+
+      console.log(saldoAdmin);
 
       const saldoSuperAdmin = await DetailSampahSuperAdmins.findAll({
         where: {
@@ -192,7 +204,7 @@ class TransaksiTarikSaldoController extends Routers {
         }
       );
 
-      success({}, "Succes Tarik Saldo Admin!", res);
+      success({}, "Succes Tarik Saldo Admin! dddd", res);
     } catch (err: any) {
       console.log(err.message);
       error({ error: err.message }, req.originalUrl, 403, res);

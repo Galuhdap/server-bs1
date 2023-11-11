@@ -28,6 +28,7 @@ class PenimbangController extends Routers {
       this.getAllPenimbang.bind(this)
     );
     this.router.get("/penimbangbyid", this.getPenimbangById.bind(this));
+    this.router.get("/cek/penimbangbyid", this.getPenimbangByIdCek.bind(this));
   }
 
   async allPenimbang(req: Request, res: Response) {
@@ -79,6 +80,18 @@ class PenimbangController extends Routers {
         }
       });
       success({row, sampah}, "Datas Admin By Kode Admin", res);
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+  async getPenimbangByIdCek(req: Request, res: Response) {
+    try {
+      const { kode_penimbang } = req.body;
+      const row = await Penimbang.findByPk(kode_penimbang);
+
+      success({row}, "Datas True Kode Penimbang", res);
     } catch (err: any) {
       console.log(err);
       error({ error: err.message }, req.originalUrl, 403, res);

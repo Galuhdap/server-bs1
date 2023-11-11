@@ -13,6 +13,7 @@ class SuperAdminController extends Routers {
     super();
     this.router.get("/suadmin", this.getAllSuperAdmin.bind(this));
     this.router.get("/suadminbyid", this.getSuperAdminById.bind(this));
+    this.router.get("/cek/suadminbyid", this.getSuperAdminByIdCek.bind(this));
   }
 
   async getAllSuperAdmin(req: Request, res: Response) {
@@ -47,6 +48,18 @@ class SuperAdminController extends Routers {
       });
 
       success({row}, "Datas Sampah SuAdmin", res);
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+  async getSuperAdminByIdCek(req: Request, res: Response) {
+    try {
+      const { kode_super_admin } = req.body;
+      const row = await SuperAdmins.findByPk(kode_super_admin)
+
+      success({row}, "Datas SuAdmin True", res);
     } catch (err: any) {
       console.log(err);
       error({ error: err.message }, req.originalUrl, 403, res);

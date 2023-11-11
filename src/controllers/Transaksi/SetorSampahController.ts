@@ -211,7 +211,6 @@ class SetorSampahController extends Routers {
       const kodeSetor: string = randomKodeNumber(
         "KS-",
         kodeNasabah["rw"],
-        kodeNasabah["rt"]
       );
 
       const total = kodeBarang["harga_pertama"]! * berat;
@@ -418,9 +417,8 @@ class SetorSampahController extends Routers {
         );
 
       const kodeSusutSampah: string = randomKodeNumber(
-        "KSSBS-",
+        "KPA-",
         kodeAdminBS["rw"],
-        kodeAdminBS["rt"]
       );
 
       const harga = berat * kodeBarang!["harga_kedua"]!;
