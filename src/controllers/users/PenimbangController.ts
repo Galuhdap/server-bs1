@@ -4,7 +4,7 @@ import Routers from "../RouterController";
 import VerifyAuth from "../../middleware/VerifyAuth";
 import Admin from "../../db/models/Admin";
 import SetorSampah from "../../db/models/SetorSampahs";
-import error, { success } from "../../helpers/response";
+import error, { statusFalse, statusTrue, success } from "../../helpers/response";
 import sequelizeConnection from "../../config/dbConnect";
 import JenisSampahKerings from "../../db/models/JenisSamapahKerings";
 import JenisBarang from "../../db/models/JenisBarang";
@@ -90,8 +90,13 @@ class PenimbangController extends Routers {
     try {
       const { kode_penimbang } = req.body;
       const row = await Penimbang.findByPk(kode_penimbang);
-
-      success({row}, "Datas True Kode Penimbang", res);
+      if(!row){
+        statusFalse("Datas Penimbang False" , res);
+        return false;
+      } else {
+        statusTrue("Datas Penimbang True" , res);
+        return true;
+      }
     } catch (err: any) {
       console.log(err);
       error({ error: err.message }, req.originalUrl, 403, res);

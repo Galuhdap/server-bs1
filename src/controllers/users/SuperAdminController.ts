@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import Nasabah from "../../db/models/Nasabah";
 import Routers from "../RouterController";
-import error, { success } from "../../helpers/response";
+import error, { statusFalse, statusTrue, success } from "../../helpers/response";
 import TarikSaldoNasabahs from "../../db/models/Tariksaldonasabah";
 import SetorSampah from "../../db/models/SetorSampahs";
 import DetailSampahNasabahs from "../../db/models/DetailSampahNasabah";
@@ -58,8 +58,13 @@ class SuperAdminController extends Routers {
     try {
       const { kode_super_admin } = req.body;
       const row = await SuperAdmins.findByPk(kode_super_admin)
-
-      success({row}, "Datas SuAdmin True", res);
+      if(!row){
+        statusFalse("Datas Super Admin False" , res);
+        return false;
+      } else {
+        statusTrue("Datas Super Admin True" , res);
+        return true;
+      }
     } catch (err: any) {
       console.log(err);
       error({ error: err.message }, req.originalUrl, 403, res);
