@@ -17,6 +17,7 @@ import DetailSampahSuperAdmins from "../../db/models/Detailsampahsuperadmin";
 import TarikSaldoAdmins from "../../db/models/Tariksaldoadmin";
 import Admins from "../../db/models/Admin";
 import SuperAdmins from "../../db/models/SuperAdmin";
+import TarikKeuntunganAdmins from "../../db/models/Tarikkeuntunganadmin";
 
 class TransaksiTarikSaldoController extends Routers {
   constructor() {
@@ -60,6 +61,18 @@ class TransaksiTarikSaldoController extends Routers {
     this.router.post(
       "/service/up/biayaadmin",
       this.updateBiayaAdmin.bind(this)
+    );
+    this.router.post(
+      "/service/keuntungan",
+      this.tarikKeuntunganAdmin.bind(this)
+    );
+    this.router.get(
+      "/service/keuntungan/admin",
+      this.getTarikKeuntunganAdmin.bind(this)
+    );
+    this.router.get(
+      "/service/keuntungan/induk",
+      this.getTarikKeuntunganSuper.bind(this)
     );
   }
 
@@ -134,25 +147,23 @@ class TransaksiTarikSaldoController extends Routers {
       const { kode_invoice, jumlah_penarikan, kode_super_admin, kode_admin } =
         req.body;
 
-       const kodeAdmin = await Admins.findByPk(kode_admin);
-       
-       if(!kodeAdmin) return error(
-        { message: "Masukan input yang benar Kode Admin" },
-        req.originalUrl,
-        402,
-        res
-      );
+      const kodeAdmin = await Admins.findByPk(kode_admin);
 
+      if (!kodeAdmin)
+        return error(
+          { message: "Masukan input yang benar Kode Admin" },
+          req.originalUrl,
+          402,
+          res
+        );
 
       let status = false;
       const kodeTariksaldo: string = randomKodeNumberSampah("KTS-");
       const saldoAdmin = await DetailSampahBs.findAll({
         where: {
-          kode_admin
+          kode_admin,
         },
       });
-
-      console.log(saldoAdmin);
 
       const saldoSuperAdmin = await DetailSampahSuperAdmins.findAll({
         where: {
@@ -167,9 +178,9 @@ class TransaksiTarikSaldoController extends Routers {
         biayaAdmin[0]["harga"]!;
 
       const saldoAkhirSuperAdmin =
-        saldoSuperAdmin[0]["saldo"]! -
-        jumlah_penarikan -
-        biayaAdmin[0]["harga"]!;
+        saldoSuperAdmin[0]["saldo_penjualan"]! - jumlah_penarikan;
+
+      const keuntungan = saldoSuperAdmin[0]["saldo"]! + biayaAdmin[0]["harga"]!;
 
       await TarikSaldoAdmins.create({
         kode_biayaAdmin: biayaAdmin[0]["kode_biayaAdmin"]!,
@@ -195,7 +206,8 @@ class TransaksiTarikSaldoController extends Routers {
 
       await DetailSampahSuperAdmins.update(
         {
-          saldo: saldoAkhirSuperAdmin,
+          saldo: keuntungan,
+          saldo_penjualan: saldoAkhirSuperAdmin,
         },
         {
           where: {
@@ -204,7 +216,7 @@ class TransaksiTarikSaldoController extends Routers {
         }
       );
 
-      success({}, "Succes Tarik Saldo Admin! dddd", res);
+      success({}, "Succes Tarik Saldo Admin!", res);
     } catch (err: any) {
       console.log(err.message);
       error({ error: err.message }, req.originalUrl, 403, res);
@@ -230,8 +242,10 @@ class TransaksiTarikSaldoController extends Routers {
       const saldoAkhir =
         saldoNasabah[0]["saldo"]! - jumlah_penarikan - biayaAdmin[0]["harga"]!;
 
-      const saldoAkhirBs =
-        saldoBS[0]["saldo"]! - jumlah_penarikan - biayaAdmin[0]["harga"]!;
+      const saldoAkhirBs = saldoBS[0]["saldo"]! - jumlah_penarikan;
+
+      const keuntungan =
+        saldoBS[0]["saldo_sekarang"]! + biayaAdmin[0]["harga"]!;
 
       const rows = await TarikSaldoNasabahs.update(
         {
@@ -256,7 +270,8 @@ class TransaksiTarikSaldoController extends Routers {
 
       await DetailSampahBs.update(
         {
-          saldo: saldoAkhirBs,
+          saldo: keuntungan,
+          saldo_sekarang: saldoAkhirBs,
         },
         {
           where: {
@@ -325,10 +340,10 @@ class TransaksiTarikSaldoController extends Routers {
     try {
       const { kode_nasabah } = req.body;
 
-      const rows = await TarikSaldoNasabahs.sum("jumlah_penarikan",{
+      const rows = await TarikSaldoNasabahs.sum("jumlah_penarikan", {
         where: {
-          kode_nasabah
-        }
+          kode_nasabah,
+        },
       });
       success({ rows }, "Total Penarikan saldo By Kode Admin", res);
     } catch (err: any) {
@@ -530,6 +545,120 @@ class TransaksiTarikSaldoController extends Routers {
         },
       });
       success({ rows }, "Tombol Admin", res);
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+  async tarikKeuntunganAdmin(req: Request, res: Response) {
+    try {
+      const { kode_invoice, jumlah_penarikan, kode_super_admin, kode_admin } =
+        req.body;
+
+      const kodeAdmin = await Admins.findByPk(kode_admin);
+
+      if (!kodeAdmin)
+        return error(
+          { message: "Masukan input yang benar Kode Admin" },
+          req.originalUrl,
+          402,
+          res
+        );
+
+      const kodeTariksaldo: string = randomKodeNumberSampah("TKA-");
+
+      const saldoAdmin = await DetailSampahBs.findAll({
+        where: {
+          kode_admin,
+        },
+      });
+
+      const saldoSuperAdmin = await DetailSampahSuperAdmins.findAll({
+        where: {
+          kode_super_admin,
+        },
+      });
+
+      await TarikKeuntunganAdmins.create({
+        kode_tariksaldo: kodeTariksaldo,
+        nomor_invoice: kode_invoice,
+        jumlah_penarikan,
+        kode_super_admin,
+        kode_admin: kode_admin,
+      });
+
+      const saldoAkhirSuperAdmin =
+        saldoSuperAdmin[0]["saldo_penjualan"]! - jumlah_penarikan;
+
+      const saldoKeuntunganAdmin = saldoAdmin[0]["saldo"]! - jumlah_penarikan;
+
+      await DetailSampahBs.update(
+        {
+          saldo: saldoKeuntunganAdmin,
+        },
+        {
+          where: {
+            kode_admin: kode_admin,
+          },
+        }
+      );
+
+      await DetailSampahSuperAdmins.update(
+        {
+          saldo_penjualan: saldoAkhirSuperAdmin,
+        },
+        {
+          where: {
+            kode_super_admin,
+          },
+        }
+      );
+      success({}, "Succes Tarik Saldo Keuntungan Admin", res);
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+  async getTarikKeuntunganAdmin(req: Request, res: Response) {
+    try {
+      const { kode_admin } = req.body;
+
+      const kodeAdmin = await Admins.findByPk(kode_admin);
+
+      if (!kodeAdmin)
+        return error(
+          { message: "Masukan input yang benar Kode Admin" },
+          req.originalUrl,
+          402,
+          res
+        );
+
+      const rows = await TarikKeuntunganAdmins.findAll({
+        where: {
+          kode_admin,
+        },
+      });
+
+      success({rows}, "Tarik Keuntungan Admin", res);
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+  async getTarikKeuntunganSuper(req: Request, res: Response) {
+    try {
+      const { kode_super_admin } = req.body;
+
+      const rows = await TarikKeuntunganAdmins.findAll({
+        where: {
+          kode_super_admin,
+        },
+      });
+
+      success({rows}, "Tarik Keuntungan Admin", res);
     } catch (err: any) {
       console.log(err);
       error({ error: err.message }, req.originalUrl, 403, res);

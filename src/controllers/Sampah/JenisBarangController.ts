@@ -30,6 +30,8 @@ class JenisBarangController extends Routers {
         jenis_barang,
         satuan,
         harga_pertama,
+        keuntungan_pertama,
+        keuntungan_kedua,
         harga_kedua,
         kode_sampah,
         kode_super_induk,
@@ -39,13 +41,20 @@ class JenisBarangController extends Routers {
       // const sampah = JenisSampahKerings.findAll({where: kode_sampah});
       // if (sampah == null) error({ error: "Sampah Tidak Ada" }, req.originalUrl, 403, res);
 
+      const total_pertama = (harga_pertama - keuntungan_pertama);
+      const total_kedua = (harga_kedua - keuntungan_kedua);
+
       const rows = await JenisBarang.create({
         kode_super_induk,
         kode_barang: kodeBarang,
         jenis_barang,
         satuan,
         harga_pertama,
+        keuntungan_pertama,
+        total_pertama,
         harga_kedua,
+        keuntungan_kedua,
+        total_kedua,
         kode_sampah,
       });
 

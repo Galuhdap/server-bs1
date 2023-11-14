@@ -7,6 +7,7 @@ interface DetailSampahSuperAdminsAttributes {
   kode_detail_sampah?: string;
   berat?: number | null;
   saldo?: number | null;
+  saldo_penjualan?: number | null;
   kode_super_admin?: string | null;
 
   createdAt?: Date;
@@ -28,6 +29,7 @@ class DetailSampahSuperAdmins
   kode_detail_sampah!: string;
   berat!: number | null;
   saldo!: number | null;
+  saldo_penjualan!: number | null;
   kode_super_admin!: string | null;
 
   public readonly createdAt!: Date;
@@ -50,6 +52,10 @@ DetailSampahSuperAdmins.init(
       type: DataTypes.DOUBLE
     },
     saldo: {
+      allowNull: true,
+      type: DataTypes.DOUBLE
+    },
+    saldo_penjualan: {
       allowNull: true,
       type: DataTypes.DOUBLE
     },

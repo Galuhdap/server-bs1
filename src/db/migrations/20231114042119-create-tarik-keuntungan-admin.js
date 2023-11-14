@@ -2,27 +2,24 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('DetailSampahSuperAdmins', {
-      kode_detail_sampah: {
-        allowNull: true,
+    await queryInterface.createTable('TarikKeuntunganAdmins', {
+      kode_tariksaldo: {
+        allowNull: false,
         primaryKey: true,
         type: Sequelize.STRING
       },
-      kode_super_admin: {
-        allowNull: true,
+      nomor_invoice: {
+        unique:true,
         type: Sequelize.STRING
       },
-      berat: {
-        allowNull: true,
-        type: Sequelize.DOUBLE
+      jumlah_penarikan: {
+        type: Sequelize.INTEGER
       },
-      saldo: {
-        allowNull: true,
-        type: Sequelize.DOUBLE
+      kode_admin: {
+        type: Sequelize.STRING
       },
-      saldo_penjualan: {
-        allowNull: true,
-        type: Sequelize.DOUBLE
+      kode_super_admin: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
@@ -35,6 +32,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('DetailSampahSuperAdmins');
+    await queryInterface.dropTable('TarikKeuntunganAdmins');
   }
 };

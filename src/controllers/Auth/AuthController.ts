@@ -496,6 +496,7 @@ class AdminAuthController extends Routers {
         kode_super_admin:kodeSuperAdmin,
         berat:0,
         saldo:0,
+        saldo_penjualan:0
       });
 
       success({user, result, detailsampahSuperadmin}, "Succes Register Super Admin!", res);

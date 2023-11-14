@@ -101,9 +101,9 @@ class PenjualanSampahController extends Routers{
           const _total = admin[0]["saldo"]! + total;
 
 
-          const updateSusutSampah = await DetailSampahSuperAdmins.update({
+         await DetailSampahSuperAdmins.update({
             berat:_berat,
-            saldo:_total,
+            saldo_penjualan:_total,
           }, {
             where:{
               kode_super_admin:kodeSuperAdmin["kode_super_admin"],

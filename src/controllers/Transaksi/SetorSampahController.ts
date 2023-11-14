@@ -163,11 +163,11 @@ class SetorSampahController extends Routers {
   async totalSetorSampahNasabah(req: Request, res: Response) {
     try {
       const { kode_nasabah } = req.body;
-      const row = await SetorSampah.sum("total",{
-        where:{
-          kode_nasabah
-        }
-      })
+      const row = await SetorSampah.sum("total", {
+        where: {
+          kode_nasabah,
+        },
+      });
       success({ row }, "Total Setor Nasabah", res);
     } catch (err: any) {
       console.log(err);
@@ -208,12 +208,9 @@ class SetorSampahController extends Routers {
           res
         );
 
-      const kodeSetor: string = randomKodeNumber(
-        "KS-",
-        kodeNasabah["rw"],
-      );
+      const kodeSetor: string = randomKodeNumber("KS-", kodeNasabah["rw"]);
 
-      const total = kodeBarang["harga_pertama"]! * berat;
+      const total = berat * kodeBarang!["harga_pertama"]!;
 
       const rows = await SetorSampah.create({
         kode_setor: kodeSetor,
@@ -232,16 +229,17 @@ class SetorSampahController extends Routers {
         where: { kode_nasabah: kodeNasabah!["kode_nasabah"] },
       });
 
-      const beratsampahnasabah = await DetailSampahNasabahs.sum(
-        "berat_sekarang",
-        { where: { kode_nasabah: kodeNasabah!["kode_nasabah"] } }
-      );
-      const saldosampahnasabah = await DetailSampahNasabahs.sum(
-        "saldo_sekarang",
-        { where: { kode_nasabah: kodeNasabah!["kode_nasabah"] } }
-      );
+      // const beratsampahnasabah = await DetailSampahNasabahs.sum(
+      //   "berat_sekarang",
+      //   { where: { kode_nasabah: kodeNasabah!["kode_nasabah"] } }
+      // );
+      // const saldosampahnasabah = await DetailSampahNasabahs.sum(
+      //   "saldo_sekarang",
+      //   { where: { kode_nasabah: kodeNasabah!["kode_nasabah"] } }
+      // );
 
       const ceksaldo = berat * kodeBarang!["harga_pertama"]!;
+
       const saldos = await DetailSampahNasabahs.findAll({
         where: {
           kode_nasabah,
@@ -254,18 +252,21 @@ class SetorSampahController extends Routers {
         },
       });
 
-      const totals = saldos[0]["saldo"]! + total;
-
+      // const _berat = saldos[0]["berat"]! + berat;
+      const keuntungan =
+      (kodeBarang!["harga_pertama"]! - kodeBarang!["keuntungan_pertama"]!) *
+      berat;
+      const totals = saldos[0]["saldo"]! + keuntungan;
+ 
       const _beratAdmin = cekBeratAdmins[0]["berat"]! + berat;
+      const saldoAdmin = cekBeratAdmins[0]["saldo"]! + keuntungan;
 
       // validasi jika datetime sudah berubah hari maka , berat sekarang dan saldo sekarang akan reset menjadi 0
 
-      const updateSampahNasabah = await DetailSampahNasabahs.update(
+      await DetailSampahNasabahs.update(
         {
           berat: bers,
           saldo: totals,
-          berat_sekarang: beratsampahnasabah + berat, //harusnya reset
-          saldo_sekarang: saldosampahnasabah * ceksaldo, //harusnya reset
           kode_admin: kodeAdmins!["kode_admin"],
         },
         {
@@ -275,34 +276,34 @@ class SetorSampahController extends Routers {
         }
       );
 
-      const date = new Date().toISOString().slice(0, 10);
+      // const date = new Date().toISOString().slice(0, 10);
 
-      const cekBeratAdmin = await DetailSampahNasabahs.sum("berat_sekarang", {
-        where: {
-          [Op.and]: [
-            sequelizeConnection.literal(`DATE(createdAt) = '${date}'`),
-            {
-              kode_admin: kodeAdmins!["kode_admin"],
-            },
-          ],
-        },
-      });
-      const cekSaldoAdmin = await DetailSampahNasabahs.sum("saldo_sekarang", {
-        where: {
-          [Op.and]: [
-            sequelizeConnection.literal(`DATE(createdAt) = '${date}'`),
-            {
-              kode_admin: kodeAdmins!["kode_admin"],
-            },
-          ],
-        },
-      });
-
-      const updateSampahBS = await DetailSampahBs.update(
+      // const cekBeratAdmin = await DetailSampahNasabahs.sum("berat_sekarang", {
+      //   where: {
+      //     [Op.and]: [
+      //       sequelizeConnection.literal(`DATE(createdAt) = '${date}'`),
+      //       {
+      //         kode_admin: kodeAdmins!["kode_admin"],
+      //       },
+      //     ],
+      //   },
+      // });
+      // const cekSaldoAdmin = await DetailSampahNasabahs.sum("saldo_sekarang", {
+      //   where: {
+      //     [Op.and]: [
+      //       sequelizeConnection.literal(`DATE(createdAt) = '${date}'`),
+      //       {
+      //         kode_admin: kodeAdmins!["kode_admin"],
+      //       },
+      //     ],
+      //   },
+      // });
+      await DetailSampahBs.update(
         {
           berat: _beratAdmin,
-          berat_sekarang: cekBeratAdmin,
-          saldo_sekarang: cekSaldoAdmin,
+          saldo: saldoAdmin,
+          // berat_sekarang: cekBeratAdmin,
+          // saldo_sekarang: cekSaldoAdmin,
         },
         {
           where: {
@@ -320,13 +321,7 @@ class SetorSampahController extends Routers {
 
   async hapusSetorSampahNasabah(req: Request, res: Response) {
     try {
-      const {
-        kodeSetor,
-        berat,
-        saldo,
-        kode_nasabah,
-        kode_admin,
-      } = req.body;
+      const { kodeSetor, berat, saldo, kode_nasabah, kode_admin } = req.body;
 
       const kodeNasabah = await DetailSampahNasabahs.findAll({
         where: { kode_nasabah },
@@ -418,7 +413,7 @@ class SetorSampahController extends Routers {
 
       const kodeSusutSampah: string = randomKodeNumber(
         "KPA-",
-        kodeAdminBS["rw"],
+        kodeAdminBS["rw"]
       );
 
       const harga = berat * kodeBarang!["harga_kedua"]!;
@@ -434,17 +429,17 @@ class SetorSampahController extends Routers {
         kode_super_admin: kode_super_admin,
       });
 
-      const beratss = await SusutSampahAdmins.sum("berat", {
-        where: { kode_admin_bs: kodeAdminBS!["kode_admin"] },
-      });
-      const cekHarga = await SusutSampahAdmins.sum("harga", {
-        where: { kode_admin_bs: kodeAdminBS!["kode_admin"] },
-      });
-      const cek = await DetailSampahBs.sum("berat", {
-        where: { kode_admin: kodeAdminBS!["kode_admin"] },
-      });
+      // const beratss = await SusutSampahAdmins.sum("berat", {
+      //   where: { kode_admin_bs: kodeAdminBS!["kode_admin"] },
+      // });
+      // const cekHarga = await SusutSampahAdmins.sum("harga", {
+      //   where: { kode_admin_bs: kodeAdminBS!["kode_admin"] },
+      // });
+      // const cek = await DetailSampahBs.sum("berat", {
+      //   where: { kode_admin: kodeAdminBS!["kode_admin"] },
+      // });
 
-      const berats = cek - berat;
+      // const berats = cek - berat;
 
       const bs = await DetailSampahBs.findAll({
         where: {
@@ -458,17 +453,25 @@ class SetorSampahController extends Routers {
         },
       });
 
+      const keuntungan =
+        (kodeBarang!["harga_kedua"]! - kodeBarang!["keuntungan_kedua"]!) *
+        berat;
+      const totalPenjualanSampahAdmin =
+        ((kodeBarang!["harga_kedua"]! - kodeBarang!["keuntungan_kedua"]! ) *
+        berat) - kodeBarang!["keuntungan_pertama"]!;
       const cekBerat = bs[0]["berat"]! - berat;
-      const saldo = bs[0]["saldo"]! + harga;
-      const _saldo = bs[0]["saldo_sekarang"]! + harga;
+      const saldo = bs[0]["saldo"]! + keuntungan;
+      const saldos = bs[0]["saldo_sekarang"]! + totalPenjualanSampahAdmin;
 
       const cekberatAdmin = admin[0]["berat"]! + berat;
+
+      const saldoSa = admin[0]["saldo"]! + keuntungan;
 
       const updateSampahBS = await DetailSampahBs.update(
         {
           berat: cekBerat,
-          saldo: saldo,
-          saldo_sekarang: _saldo,
+          saldo_sekarang: saldos
+
         },
         {
           where: {
@@ -477,9 +480,11 @@ class SetorSampahController extends Routers {
         }
       );
 
-      const updateSampahInduk = await DetailSampahSuperAdmins.update(
+       await DetailSampahSuperAdmins.update(
         {
           berat: cekberatAdmin,
+          saldo: saldoSa,
+
         },
         {
           where: {
@@ -514,7 +519,7 @@ class SetorSampahController extends Routers {
         );
 
       const rows = await SusutSampahAdmins.findAll({
-        include:[
+        include: [
           {
             model: Admins,
           },
@@ -555,7 +560,7 @@ class SetorSampahController extends Routers {
         );
 
       const rows = await SusutSampahAdmins.findAll({
-        include:[
+        include: [
           {
             model: Admins,
           },
