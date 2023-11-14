@@ -45,7 +45,6 @@ class JenisBarangController extends Routers {
       const total_kedua = harga_kedua - keuntungan_kedua;
 
       const rows = await JenisBarang.create({
-        kode_super_induk,
         kode_barang: kodeBarang,
         jenis_barang,
         satuan,
@@ -56,6 +55,7 @@ class JenisBarangController extends Routers {
         keuntungan_kedua,
         total_kedua,
         kode_sampah,
+        kode_super_induk,
       });
 
       success(rows, "Create Jenis Barang!", res);

@@ -59,10 +59,16 @@ JenisBarang.init({
   keuntungan_pertama: {
     type: DataTypes.DOUBLE
   },
+  total_pertama: {
+    type: DataTypes.DOUBLE
+  },
   harga_kedua: {
     type: DataTypes.DOUBLE
   },
   keuntungan_kedua: {
+    type: DataTypes.DOUBLE
+  },
+  total_kedua: {
     type: DataTypes.DOUBLE
   },
   kode_sampah: {
