@@ -41,8 +41,8 @@ class JenisBarangController extends Routers {
       // const sampah = JenisSampahKerings.findAll({where: kode_sampah});
       // if (sampah == null) error({ error: "Sampah Tidak Ada" }, req.originalUrl, 403, res);
 
-      const total_pertama = (harga_pertama - keuntungan_pertama);
-      const total_kedua = (harga_kedua - keuntungan_kedua);
+      const total_pertama = harga_pertama - keuntungan_pertama;
+      const total_kedua = harga_kedua - keuntungan_kedua;
 
       const rows = await JenisBarang.create({
         kode_super_induk,
@@ -66,13 +66,21 @@ class JenisBarangController extends Routers {
 
   async editJenisBarang(req: Request, res: Response) {
     try {
-      const { jenis_barang, harga_pertama, harga_kedua, kode_barang } =
+      const { jenis_barang, harga_pertama,keuntungan_pertama ,  harga_kedua, keuntungan_kedua, kode_barang } =
         req.body;
+
+        const total_pertama = harga_pertama - keuntungan_pertama;
+        const total_kedua = harga_kedua - keuntungan_kedua;
+
       const rows = await JenisBarang.update(
         {
           jenis_barang,
           harga_pertama,
+          keuntungan_pertama,
+          total_pertama,
           harga_kedua,
+          keuntungan_kedua,
+          total_kedua
         },
         {
           where: {
