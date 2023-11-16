@@ -18,19 +18,7 @@ module.exports = {
       harga_pertama: {
         type: Sequelize.DOUBLE
       },
-      keuntungan_pertama: {
-        type: Sequelize.DOUBLE
-      },
-      total_pertama: {
-        type: Sequelize.DOUBLE
-      },
       harga_kedua: {
-        type: Sequelize.DOUBLE
-      },
-      keuntungan_kedua: {
-        type: Sequelize.DOUBLE
-      },
-      total_kedua: {
         type: Sequelize.DOUBLE
       },
       kode_sampah: {

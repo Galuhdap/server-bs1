@@ -8,11 +8,7 @@ interface JenisBarangAttributes {
   jenis_barang?: string | null,
   satuan?: number | null,
   harga_pertama?: number | null,
-  keuntungan_pertama?: number | null,
-  total_pertama?: number | null,
   harga_kedua?: number | null,
-  keuntungan_kedua?: number | null,
-  total_kedua?: number | null,
   kode_sampah?: string | null;
   kode_super_induk?: string | null;
   createdAt?: Date,
@@ -27,11 +23,7 @@ class JenisBarang extends Model<JenisBarangAttributes, JenisBarangInput> impleme
   jenis_barang!: string | null;
   satuan!: number | null;
   harga_pertama!: number | null;
-  keuntungan_pertama!: number | null;
-  total_pertama!: number | null;
   harga_kedua!: number | null;
-  keuntungan_kedua!: number | null;
-  total_kedua!: number | null;
   kode_sampah!: string | null;
   kode_super_induk!: string | null;
 
@@ -56,19 +48,7 @@ JenisBarang.init({
   harga_pertama: {
     type: DataTypes.DOUBLE
   },
-  keuntungan_pertama: {
-    type: DataTypes.DOUBLE
-  },
-  total_pertama: {
-    type: DataTypes.DOUBLE
-  },
   harga_kedua: {
-    type: DataTypes.DOUBLE
-  },
-  keuntungan_kedua: {
-    type: DataTypes.DOUBLE
-  },
-  total_kedua: {
     type: DataTypes.DOUBLE
   },
   kode_sampah: {
