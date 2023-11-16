@@ -28,6 +28,14 @@ module.exports = {
         allowNull: true,
         type: Sequelize.DOUBLE
       },
+      saldo_cash: {
+        allowNull: true,
+        type: Sequelize.DOUBLE
+      },
+      keuntungan_cash: {
+        allowNull: true,
+        type: Sequelize.DOUBLE
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

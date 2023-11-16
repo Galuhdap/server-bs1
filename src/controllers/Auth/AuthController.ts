@@ -260,6 +260,8 @@ class AdminAuthController extends Routers {
         saldo:0,
         berat_sekarang:0,
         saldo_sekarang:0,
+        saldo_cash:0,
+        keuntungan_cash:0
       });
 
       const tomol = await Tombol.create({

@@ -52,7 +52,7 @@ class PengeluaranController extends Routers {
       await DetailSampahSuperAdmins.update(
         {
           saldo: _total,
-          saldo_penjualan: _saldoPenjualan
+          // saldo_penjualan: _saldoPenjualan
         },
         {
           where: {
@@ -125,11 +125,11 @@ class PengeluaranController extends Routers {
         },
       });
 
-      const _total = saldoAdmin[0]["saldo"]! - harga;
+      const _total = saldoAdmin[0]["keuntungan_cash"]! - harga;
 
       await DetailSampahBs.update(
         {
-          saldo: _total,
+          keuntungan_cash: _total
         },
         {
           where: {

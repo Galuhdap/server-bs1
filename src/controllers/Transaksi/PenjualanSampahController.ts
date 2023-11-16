@@ -95,14 +95,20 @@ class PenjualanSampahController extends Routers{
             where:{
               kode_super_admin
             }
-          })
+          });
+
+          const keuntungan =
+          (harga - kodeBarang!["harga_kedua"]!) * berat;
+  
+        const penjualan =  total - keuntungan;
 
           const _berat = admin[0]["berat"]! - berat;
-          const _total = admin[0]["saldo"]! + total;
+          const _total = admin[0]["saldo"]! + penjualan;
 
 
          await DetailSampahSuperAdmins.update({
             berat:_berat,
+            saldo:keuntungan,
             saldo_penjualan:_total,
           }, {
             where:{

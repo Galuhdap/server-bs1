@@ -9,6 +9,8 @@ interface DetailSampahBsAttributes {
   saldo?: number | null;
   berat_sekarang?: number | null;
   saldo_sekarang?: number | null;
+  saldo_cash?: number | null;
+  keuntungan_cash?: number | null;
   kode_admin?: string | null;
 
   createdAt?: Date;
@@ -29,6 +31,8 @@ class DetailSampahBs
   saldo!: number | null;
   berat_sekarang!: number | null;
   saldo_sekarang!: number | null;
+  saldo_cash!: number | null;
+  keuntungan_cash!: number | null;
   kode_admin!: string | null;
 
   public readonly createdAt!: Date;
@@ -59,6 +63,14 @@ DetailSampahBs.init(
       type: DataTypes.DOUBLE,
     },
     saldo_sekarang: {
+      allowNull: true,
+      type: DataTypes.DOUBLE,
+    },
+    saldo_cash: {
+      allowNull: true,
+      type: DataTypes.DOUBLE,
+    },
+    keuntungan_cash: {
       allowNull: true,
       type: DataTypes.DOUBLE,
     },

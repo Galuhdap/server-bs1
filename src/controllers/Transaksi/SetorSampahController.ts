@@ -253,20 +253,21 @@ class SetorSampahController extends Routers {
       });
 
       // const _berat = saldos[0]["berat"]! + berat;
-      const keuntungan =
-      (kodeBarang!["harga_pertama"]! - kodeBarang!["keuntungan_pertama"]!) *
-      berat;
-      const totals = saldos[0]["saldo"]! + keuntungan;
- 
+      // const keuntungan =
+      // (kodeBarang!["harga_kedua"]! - kodeBarang!["harga_pertama"]!) *
+      // berat;
+
+      // const totals = saldos[0]["saldo"]! + keuntungan;
+
       const _beratAdmin = cekBeratAdmins[0]["berat"]! + berat;
-      const saldoAdmin = cekBeratAdmins[0]["saldo"]! + keuntungan;
+      // const saldoAdmin = cekBeratAdmins[0]["saldo"]! + keuntungan;
 
       // validasi jika datetime sudah berubah hari maka , berat sekarang dan saldo sekarang akan reset menjadi 0
 
       await DetailSampahNasabahs.update(
         {
           berat: bers,
-          saldo: totals,
+          saldo: total,
           kode_admin: kodeAdmins!["kode_admin"],
         },
         {
@@ -275,33 +276,10 @@ class SetorSampahController extends Routers {
           },
         }
       );
-
-      // const date = new Date().toISOString().slice(0, 10);
-
-      // const cekBeratAdmin = await DetailSampahNasabahs.sum("berat_sekarang", {
-      //   where: {
-      //     [Op.and]: [
-      //       sequelizeConnection.literal(`DATE(createdAt) = '${date}'`),
-      //       {
-      //         kode_admin: kodeAdmins!["kode_admin"],
-      //       },
-      //     ],
-      //   },
-      // });
-      // const cekSaldoAdmin = await DetailSampahNasabahs.sum("saldo_sekarang", {
-      //   where: {
-      //     [Op.and]: [
-      //       sequelizeConnection.literal(`DATE(createdAt) = '${date}'`),
-      //       {
-      //         kode_admin: kodeAdmins!["kode_admin"],
-      //       },
-      //     ],
-      //   },
-      // });
       await DetailSampahBs.update(
         {
           berat: _beratAdmin,
-          saldo: saldoAdmin,
+          // saldo: saldoAdmin,
           // berat_sekarang: cekBeratAdmin,
           // saldo_sekarang: cekSaldoAdmin,
         },
@@ -429,18 +407,6 @@ class SetorSampahController extends Routers {
         kode_super_admin: kode_super_admin,
       });
 
-      // const beratss = await SusutSampahAdmins.sum("berat", {
-      //   where: { kode_admin_bs: kodeAdminBS!["kode_admin"] },
-      // });
-      // const cekHarga = await SusutSampahAdmins.sum("harga", {
-      //   where: { kode_admin_bs: kodeAdminBS!["kode_admin"] },
-      // });
-      // const cek = await DetailSampahBs.sum("berat", {
-      //   where: { kode_admin: kodeAdminBS!["kode_admin"] },
-      // });
-
-      // const berats = cek - berat;
-
       const bs = await DetailSampahBs.findAll({
         where: {
           kode_admin,
@@ -454,24 +420,31 @@ class SetorSampahController extends Routers {
       });
 
       const keuntungan =
-        (kodeBarang!["harga_kedua"]! - kodeBarang!["keuntungan_kedua"]!) *
-        berat;
-      const totalPenjualanSampahAdmin =
-        ((kodeBarang!["harga_kedua"]! - kodeBarang!["keuntungan_kedua"]! ) *
-        berat) - kodeBarang!["keuntungan_pertama"]!;
+        (kodeBarang!["harga_kedua"]! - kodeBarang!["harga_pertama"]!) * berat;
+
+      const penjualan =  harga - keuntungan;
+
+      // const keuntungan =
+      //   (kodeBarang!["harga_kedua"]! - kodeBarang!["keuntungan_kedua"]!) *
+      //   berat;
+      // const totalPenjualanSampahAdmin =
+      //   (kodeBarang!["harga_kedua"]! - kodeBarang!["keuntungan_kedua"]!) *
+      //     berat -
+      //   kodeBarang!["keuntungan_pertama"]!;
       const cekBerat = bs[0]["berat"]! - berat;
-      const saldo = bs[0]["saldo"]! + keuntungan;
-      const saldos = bs[0]["saldo_sekarang"]! + totalPenjualanSampahAdmin;
+      // const saldo = bs[0]["saldo"]! + keuntungan;
+      const saldos = bs[0]["saldo_sekarang"]! + penjualan;
 
       const cekberatAdmin = admin[0]["berat"]! + berat;
 
-      const saldoSa = admin[0]["saldo"]! + keuntungan;
+      // const saldoSa = admin[0]["saldo"]! + keuntungan;
 
       const updateSampahBS = await DetailSampahBs.update(
         {
           berat: cekBerat,
-          saldo_sekarang: saldos
-
+          saldo:keuntungan,
+          saldo_sekarang: saldos,
+          
         },
         {
           where: {
@@ -480,11 +453,10 @@ class SetorSampahController extends Routers {
         }
       );
 
-       await DetailSampahSuperAdmins.update(
+      await DetailSampahSuperAdmins.update(
         {
           berat: cekberatAdmin,
-          saldo: saldoSa,
-
+        
         },
         {
           where: {

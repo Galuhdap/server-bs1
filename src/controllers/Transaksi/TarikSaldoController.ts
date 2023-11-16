@@ -177,8 +177,12 @@ class TransaksiTarikSaldoController extends Routers {
         jumlah_penarikan -
         biayaAdmin[0]["harga"]!;
 
+
+      const saldoCash =
+        saldoAdmin[0]["saldo_cash"]! + saldoAkhir;
+
       const saldoAkhirSuperAdmin =
-        saldoSuperAdmin[0]["saldo_penjualan"]! - jumlah_penarikan;
+        saldoSuperAdmin[0]["saldo_penjualan"]! - jumlah_penarikan - biayaAdmin[0]["harga"]!;
 
       const keuntungan = saldoSuperAdmin[0]["saldo"]! + biayaAdmin[0]["harga"]!;
 
@@ -196,6 +200,7 @@ class TransaksiTarikSaldoController extends Routers {
       await DetailSampahBs.update(
         {
           saldo_sekarang: saldoAkhir,
+          saldo_cash: saldoCash
         },
         {
           where: {
@@ -242,7 +247,8 @@ class TransaksiTarikSaldoController extends Routers {
       const saldoAkhir =
         saldoNasabah[0]["saldo"]! - jumlah_penarikan - biayaAdmin[0]["harga"]!;
 
-      const saldoAkhirBs = saldoBS[0]["saldo"]! - jumlah_penarikan;
+      const saldoAkhirBs = saldoBS[0]["saldo"]! - jumlah_penarikan - biayaAdmin[0]["harga"]!;
+      const saldoCash = saldoBS[0]["saldo_cash"]! - jumlah_penarikan;
 
       const keuntungan =
         saldoBS[0]["saldo_sekarang"]! + biayaAdmin[0]["harga"]!;
@@ -271,7 +277,7 @@ class TransaksiTarikSaldoController extends Routers {
       await DetailSampahBs.update(
         {
           saldo: keuntungan,
-          saldo_sekarang: saldoAkhirBs,
+          saldo_cash: saldoCash
         },
         {
           where: {
@@ -553,7 +559,7 @@ class TransaksiTarikSaldoController extends Routers {
 
   async tarikKeuntunganAdmin(req: Request, res: Response) {
     try {
-      const { kode_invoice, jumlah_penarikan, kode_super_admin, kode_admin } =
+      const { nomor_invoice, jumlah_penarikan, kode_super_admin, kode_admin } =
         req.body;
 
       const kodeAdmin = await Admins.findByPk(kode_admin);
@@ -582,7 +588,7 @@ class TransaksiTarikSaldoController extends Routers {
 
       await TarikKeuntunganAdmins.create({
         kode_tariksaldo: kodeTariksaldo,
-        nomor_invoice: kode_invoice,
+        nomor_invoice,
         jumlah_penarikan,
         kode_super_admin,
         kode_admin: kode_admin,
@@ -593,9 +599,12 @@ class TransaksiTarikSaldoController extends Routers {
 
       const saldoKeuntunganAdmin = saldoAdmin[0]["saldo"]! - jumlah_penarikan;
 
+      const saldoCash = saldoAdmin[0]["keuntungan_cash"]! + jumlah_penarikan;
+
       await DetailSampahBs.update(
         {
           saldo: saldoKeuntunganAdmin,
+          keuntungan_cash: saldoCash
         },
         {
           where: {
