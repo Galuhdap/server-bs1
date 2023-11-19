@@ -6,6 +6,7 @@ import error, { success } from "../../helpers/response";
 import JenisSampahKering from "../../db/models/JenisSamapahKerings";
 import JenisBarang from "../../db/models/JenisBarang";
 import { where } from "sequelize";
+import JenisSampahKerings from "../../db/models/JenisSamapahKerings";
 
 class JenisSampahController extends Routers {
   constructor() {
@@ -36,12 +37,7 @@ class JenisSampahController extends Routers {
   async getAllJenisSampahByAdmin(req: Request, res: Response) {
     const {kode_super_induk} = req.body;
     try {
-      const rows = await JenisSampahKering.findAll({
-        include: [
-          {
-            model: JenisBarang,
-          },
-        ],
+      const rows = await JenisBarang.findAll({
         where:{
           kode_super_induk
         }

@@ -473,6 +473,15 @@ class TransaksiTarikSaldoController extends Routers {
   async biayaAdmin(req: Request, res: Response) {
     const { harga, kode_super_induk } = req.body;
 
+    const kodeAdmin = await SuperAdmins.findByPk(kode_super_induk);
+
+    if(!kodeAdmin) return error(
+      { message: "NOT FOUND" },
+      req.originalUrl,
+      402,
+      res
+    );
+
     const kodeBiayaAdmin: string = randomKodeNumberSampah("KBA-");
     const kodeBiaya: string = randomKodeNumberSampah("KA-");
     try {
@@ -660,6 +669,8 @@ class TransaksiTarikSaldoController extends Routers {
   async getTarikKeuntunganSuper(req: Request, res: Response) {
     try {
       const { kode_super_admin } = req.body;
+
+      
 
       const rows = await TarikKeuntunganAdmins.findAll({
         where: {

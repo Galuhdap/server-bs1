@@ -82,10 +82,11 @@ class JenisBarangController extends Routers {
 
   async hapusJenisBarang(req: Request, res: Response) {
     try {
-      const { kode_barang } = req.body;
+      const { kode_barang, kode_super_induk } = req.body;
       const rows = await JenisBarang.destroy({
         where: {
           kode_barang,
+          kode_super_induk,
         },
       });
       success(rows, "Edit Jenis Barang!", res);

@@ -64,6 +64,6 @@ JenisBarang.init({
 })
 
 
-
+// JenisBarang.hasMany(JenisSampahKerings, { foreignKey: 'kode_sampah' });
 
 export default JenisBarang;
