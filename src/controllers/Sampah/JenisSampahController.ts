@@ -6,7 +6,7 @@ import error, { success } from "../../helpers/response";
 import JenisSampahKering from "../../db/models/JenisSamapahKerings";
 import JenisBarang from "../../db/models/JenisBarang";
 import { where } from "sequelize";
-import JenisSampahKerings from "../../db/models/JenisSamapahKerings";
+import JenisSampahKerings from './../../db/models/JenisSamapahKerings';
 
 class JenisSampahController extends Routers {
   constructor() {
@@ -14,6 +14,7 @@ class JenisSampahController extends Routers {
     this.router.get("/product/sampah", this.getAllJenisSampah.bind(this));
     this.router.get("/product/ceksampah", this.getJenisSampah.bind(this));
     this.router.get("/product/sampah/admin", this.getAllJenisSampahByAdmin.bind(this));
+    this.router.get("/product/sampah/admins", this.getJenisSampahByAdmin.bind(this));
     this.router.post("/product/sampah", this.tambahJenisSampah.bind(this));
     this.router.post("/product/sampahedit", this.editJenisSampah.bind(this));
   }
@@ -38,6 +39,27 @@ class JenisSampahController extends Routers {
     const {kode_super_induk} = req.body;
     try {
       const rows = await JenisBarang.findAll({
+
+        where:{
+          kode_super_induk
+        }
+      });
+
+      success(rows, "Get Jenis Sampah!", res);
+    } catch (err: any) {
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+  async getJenisSampahByAdmin(req: Request, res: Response) {
+    const {kode_super_induk} = req.body;
+    try {
+      const rows = await JenisSampahKerings.findAll({
+        include:[
+          {
+            model:JenisBarang
+          }
+        ],
         where:{
           kode_super_induk
         }
