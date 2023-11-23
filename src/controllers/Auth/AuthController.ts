@@ -86,7 +86,7 @@ class AdminAuthController extends Routers {
 
 
       const kodeNasabah: string = randomKodeNumber("KN", rw);
-      const kodeReg: string = randomKodeNumber("KR", rw);
+      const kodeReg: string = randomKodeNumber("KRN", rw);
       const kodeDetailSampah: string = randomKodeNumberSampah("KDS");
       const admins = await Admin.findAll({where: {rw:rw}});
 
@@ -211,7 +211,7 @@ class AdminAuthController extends Routers {
 
 
       const kodeAdmin: string = randomKodeNumber("KA", rw);
-      const kodeReg: string = randomKodeNumber("KR", rw);
+      const kodeReg: string = randomKodeNumber("KRA", rw);
       const kodeDetailSampah: string = randomKodeNumberSampah("KDS");
 
       const SuperAdmin = await SuperAdmins.findByPk(kode_super_admin);
@@ -370,7 +370,7 @@ class AdminAuthController extends Routers {
 
 
       const kodePenimbang: string = randomKodeNumber("KP", rw);
-      const kodeReg: string = randomKodeNumber("KR",rw);
+      const kodeReg: string = randomKodeNumber("KRP",rw);
 
       const salt: any = await bcrypt.genSalt();
       const hashPassword = await bcrypt.hash(password, salt);
@@ -473,7 +473,7 @@ class AdminAuthController extends Routers {
     try {
         const { nama_super_admin,no_telp, alamat,  password } = req.body;
       const kodeSuperAdmin: string = randomKodeNumberSampah("KSA");
-      const kodeReg: string = randomKodeNumberSampah("KR");
+      const kodeReg: string = randomKodeNumberSampah("KRSA");
       const kodeDetailSampah: string = randomKodeNumberSampah("KDS");
 
       const salt: any = await bcrypt.genSalt();
