@@ -49,10 +49,7 @@ class SetorSampahController extends Routers {
       this.getSetorSampahNasabahByInduk.bind(this)
     );
     this.router.post("/setor/sampah/susut", this.setorSampahAdmin.bind(this));
-    this.router.get(
-      "/setor/sampah/search",
-      this.searchSetorSampahAdminByInduk.bind(this)
-    );
+
   }
 
   async getSetorSampahId(req: Request, res: Response) {
@@ -424,25 +421,124 @@ class SetorSampahController extends Routers {
 
       const penjualan =  harga - keuntungan;
 
-      // const keuntungan =
-      //   (kodeBarang!["harga_kedua"]! - kodeBarang!["keuntungan_kedua"]!) *
-      //   berat;
-      // const totalPenjualanSampahAdmin =
-      //   (kodeBarang!["harga_kedua"]! - kodeBarang!["keuntungan_kedua"]!) *
-      //     berat -
-      //   kodeBarang!["keuntungan_pertama"]!;
+
       const cekBerat = bs[0]["berat"]! - berat;
-      // const saldo = bs[0]["saldo"]! + keuntungan;
+
+      const _keuntungan = bs[0]["saldo"]! + keuntungan;
       const saldos = bs[0]["saldo_sekarang"]! + penjualan;
 
       const cekberatAdmin = admin[0]["berat"]! + berat;
 
-      // const saldoSa = admin[0]["saldo"]! + keuntungan;
+      const updateSampahBS = await DetailSampahBs.update(
+        {
+          berat: cekBerat,
+          saldo: _keuntungan,
+          saldo_sekarang: saldos,
+          
+        },
+        {
+          where: {
+            kode_admin: kodeAdminBS!["kode_admin"],
+          },
+        }
+      );
+
+      await DetailSampahSuperAdmins.update(
+        {
+          berat: cekberatAdmin,
+        
+        },
+        {
+          where: {
+            kode_super_admin: kodeSuperAdmin["kode_super_admin"],
+          },
+        }
+      );
+
+      success(
+        { rows, "Total Yang di peroleh": harga, updateSampahBS },
+        "Succes Setor Sampah!",
+        res
+      );
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+  async hapusSetorSampahAdmin(req: Request, res: Response) {
+    try {
+      const {
+        kode_susut_sampah_bs,
+        kode_barang,
+        berat,
+        kode_admin,
+        kode_super_admin,
+      } = req.body;
+
+      const kodeAdminBS = await Admins.findByPk(kode_admin);
+      const kodeSuperAdmin = await SuperAdmins.findByPk(kode_super_admin);
+      const kodeBarang = await JenisBarang.findByPk(kode_barang);
+
+      if (!kodeAdminBS)
+        return error(
+          { message: "Masukan input yang bena N" },
+          req.originalUrl,
+          402,
+          res
+        );
+      if (!kodeSuperAdmin)
+        return error(
+          { message: "Masukan input yang benar P" },
+          req.originalUrl,
+          402,
+          res
+        );
+      if (!kodeBarang)
+        return error(
+          { message: "Masukan input yang benar B " },
+          req.originalUrl,
+          402,
+          res
+        );
+
+      const harga = berat * kodeBarang!["harga_kedua"]!;
+
+      const rows = await SusutSampahAdmins.destroy({
+        where:{
+          kode_susut_sampah_bs
+        }
+      })
+
+      const bs = await DetailSampahBs.findAll({
+        where: {
+          kode_admin,
+        },
+      });
+
+      const admin = await DetailSampahSuperAdmins.findAll({
+        where: {
+          kode_super_admin,
+        },
+      });
+
+      const keuntungan =
+        (kodeBarang!["harga_kedua"]! - kodeBarang!["harga_pertama"]!) * berat;
+
+      const penjualan =  harga - keuntungan;
+
+      const cekBerat = bs[0]["berat"]! + berat;
+ 
+      const _keuntungan = bs[0]["saldo"]! - keuntungan;
+      const saldos = bs[0]["saldo_sekarang"]! - penjualan;
+
+      const cekberatAdmin = admin[0]["berat"]! - berat;
+
 
       const updateSampahBS = await DetailSampahBs.update(
         {
           berat: cekBerat,
-          saldo:keuntungan,
+          saldo:_keuntungan,
           saldo_sekarang: saldos,
           
         },
@@ -604,46 +700,7 @@ class SetorSampahController extends Routers {
       error({ error: err.message }, req.originalUrl, 403, res);
     }
   }
-  async searchSetorSampahAdminByInduk(req: Request, res: Response) {
-    try {
-      const { kode_super_admin, nilai_yang_dicari } = req.body;
 
-      const kodeAdminBS = await SuperAdmins.findByPk(kode_super_admin);
-
-      if (!kodeAdminBS)
-        return error(
-          { message: "Masukan input yang bena N" },
-          req.originalUrl,
-          402,
-          res
-        );
-
-      const rows = await SusutSampahAdmins.findAll({
-        where: {
-          kode_super_admin,
-          [Op.or]: [
-            {
-              kode_susut_sampah_bs: {
-                [Op.like]: "",
-              },
-            },
-            {
-              kode_susut_sampah_bs: {
-                [Op.is]: null, // Ini akan mencocokkan semua baris di mana kode_susut_sampah_bs adalah NULL
-              },
-            },
-          ],
-        },
-      });
-
-      // await SusutSampahAdmins.sequelize?.query('SELECT * FROM ')
-
-      success({ rows }, "Get Setor Sampah!", res);
-    } catch (err: any) {
-      console.log(err);
-      error({ error: err.message }, req.originalUrl, 403, res);
-    }
-  }
 }
 
 export default SetorSampahController;

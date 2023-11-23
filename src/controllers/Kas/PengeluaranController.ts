@@ -67,6 +67,52 @@ class PengeluaranController extends Routers {
     }
   }
 
+  async hapusPengeluaranSA(req: Request, res: Response) {
+    try {
+      const { kode_pengeluaran, harga, kode_super_admin } = req.body;
+
+      const kodeSuperAdmin = await SuperAdmins.findByPk(kode_super_admin);
+      if (!kodeSuperAdmin)
+        return error(
+          { message: "Masukan input yang benar P" },
+          req.originalUrl,
+          402,
+          res
+        );
+      // const kodePengaluaran: string = randomKodeNumberSampah("KPI-");
+
+      const rows = await CatatPengeluaranSuperAdmins.destroy({
+        where:{
+          kode_pengeluaran
+        }
+      })
+
+      const admin = await DetailSampahSuperAdmins.findAll({
+        where: {
+          kode_super_admin,
+        },
+      });
+
+      const _total = admin[0]["saldo"]! + harga;
+
+      await DetailSampahSuperAdmins.update(
+        {
+          saldo: _total,
+          // saldo_penjualan: _saldoPenjualan
+        },
+        {
+          where: {
+            kode_super_admin: kodeSuperAdmin["kode_super_admin"],
+          },
+        }
+      );
+
+      success(rows, "Tambah Pengeluaran Super Admin", res);
+    } catch (err: any) {
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
   async getpengeluaranSA(req: Request, res: Response) {
     try {
 
@@ -138,7 +184,62 @@ class PengeluaranController extends Routers {
         }
       );
 
-      success(rows, "Tambah Pengeluaran  Admin", res);
+      success(rows, "Delete Pengeluaran  Admin", res);
+    } catch (err: any) {
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+  async hapusPengeluaranAdmin(req: Request, res: Response) {
+    try {
+      const { kode_pengeluaran, harga, kode_admin, kode_super_admin } =
+        req.body;
+
+      const kodeSuperAdmin = await SuperAdmins.findByPk(kode_super_admin);
+
+      const kodeAdmin = await Admins.findByPk(kode_admin);
+
+      if (!kodeAdmin)
+        return error(
+          { message: "Masukan input yang benar Kode Admin" },
+          req.originalUrl,
+          402,
+          res
+        );
+
+      if (!kodeSuperAdmin)
+        return error(
+          { message: "Masukan input yang benar P" },
+          req.originalUrl,
+          402,
+          res
+        );
+
+      const rows = await CatatPengeluaranAdmins.destroy({
+        where:{
+          kode_pengeluaran
+        }
+      })
+
+      const saldoAdmin = await DetailSampahBs.findAll({
+        where: {
+          kode_admin,
+        },
+      });
+
+      const _total = saldoAdmin[0]["keuntungan_cash"]! + harga;
+
+      await DetailSampahBs.update(
+        {
+          keuntungan_cash: _total
+        },
+        {
+          where: {
+            kode_admin: kode_admin,
+          },
+        }
+      );
+
+      success(rows, "Delete Pengeluaran  Admin", res);
     } catch (err: any) {
       error({ error: err.message }, req.originalUrl, 403, res);
     }

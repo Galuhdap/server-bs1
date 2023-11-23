@@ -26,6 +26,7 @@ class TransaksiTarikSaldoController extends Routers {
     this.router.post("/tombol/admin", this.selectTombolAdmin.bind(this));
     this.router.post("/service/saldo", this.tarikSaldo.bind(this));
     this.router.post("/service/saldo/admin", this.tarikSaldoAdmin.bind(this));
+    this.router.delete("/service/saldo/admin", this.hapusTarikSaldoAdmin.bind(this));
     this.router.post(
       "/service/validasi",
       this.validasiPenarikanSaldo.bind(this)
@@ -65,6 +66,10 @@ class TransaksiTarikSaldoController extends Routers {
     this.router.post(
       "/service/keuntungan",
       this.tarikKeuntunganAdmin.bind(this)
+    );
+    this.router.delete(
+      "/service/keuntungan",
+      this.deleteTarikKeuntunganAdmin.bind(this)
     );
     this.router.get(
       "/service/keuntungan/admin",
@@ -196,6 +201,87 @@ class TransaksiTarikSaldoController extends Routers {
         kode_super_admin,
         kode_admin: kode_admin,
       });
+
+      await DetailSampahBs.update(
+        {
+          saldo_sekarang: saldoAkhir,
+          saldo_cash: saldoCash,
+        },
+        {
+          where: {
+            kode_admin: kode_admin,
+          },
+        }
+      );
+
+      await DetailSampahSuperAdmins.update(
+        {
+          saldo: keuntungan,
+          saldo_penjualan: saldoAkhirSuperAdmin,
+        },
+        {
+          where: {
+            kode_super_admin,
+          },
+        }
+      );
+
+      success({}, "Succes Tarik Saldo Admin!", res);
+    } catch (err: any) {
+      console.log(err.message);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+  async hapusTarikSaldoAdmin(req: Request, res: Response) {
+    try {
+      const { kode_tariksaldo, jumlah_penarikan, kode_super_admin, kode_admin } =
+        req.body;
+
+      const kodeAdmin = await Admins.findByPk(kode_admin);
+
+      if (!kodeAdmin)
+        return error(
+          { message: "Masukan input yang benar Kode Admin" },
+          req.originalUrl,
+          402,
+          res
+        );
+
+      let status = false;
+      const kodeTariksaldo: string = randomKodeNumberSampah("KTS-");
+      const saldoAdmin = await DetailSampahBs.findAll({
+        where: {
+          kode_admin,
+        },
+      });
+
+      const saldoSuperAdmin = await DetailSampahSuperAdmins.findAll({
+        where: {
+          kode_super_admin,
+        },
+      });
+      const biayaAdmin = await Biayaadmins.findAll();
+
+      const saldoAkhir =
+        saldoAdmin[0]["saldo_sekarang"]! +
+        jumlah_penarikan +
+        biayaAdmin[0]["harga"]!;
+
+      const saldoCash = saldoAdmin[0]["saldo_cash"]! - jumlah_penarikan;
+
+      const saldoAkhirSuperAdmin =
+        saldoSuperAdmin[0]["saldo_penjualan"]! +
+        jumlah_penarikan +
+        biayaAdmin[0]["harga"]!;
+
+      const keuntungan = saldoSuperAdmin[0]["saldo"]! - biayaAdmin[0]["harga"]!;
+
+      await TarikSaldoAdmins.destroy({
+        where:{
+          kode_tariksaldo
+        }
+      })
 
       await DetailSampahBs.update(
         {
@@ -493,6 +579,7 @@ class TransaksiTarikSaldoController extends Routers {
       error({ error: err.message }, req.originalUrl, 403, res);
     }
   }
+
   async getBiayaAdmin(req: Request, res: Response) {
     const { kode_super_induk } = req.body;
 
@@ -631,6 +718,74 @@ class TransaksiTarikSaldoController extends Routers {
         }
       );
       success({}, "Succes Tarik Saldo Keuntungan Admin", res);
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+  async deleteTarikKeuntunganAdmin(req: Request, res: Response) {
+    try {
+      const { kode_tariksaldo, jumlah_penarikan, kode_super_admin, kode_admin } =
+        req.body;
+
+      const kodeAdmin = await Admins.findByPk(kode_admin);
+
+      if (!kodeAdmin)
+        return error(
+          { message: "Masukan input yang benar Kode Admin" },
+          req.originalUrl,
+          402,
+          res
+        );
+
+      const saldoAdmin = await DetailSampahBs.findAll({
+        where: {
+          kode_admin,
+        },
+      });
+
+      const saldoSuperAdmin = await DetailSampahSuperAdmins.findAll({
+        where: {
+          kode_super_admin,
+        },
+      });
+
+      await TarikKeuntunganAdmins.destroy({
+        where:{
+          kode_tariksaldo
+        }
+      })
+
+      const saldoAkhirSuperAdmin =
+        saldoSuperAdmin[0]["saldo_penjualan"]! + jumlah_penarikan;
+
+      const saldoKeuntunganAdmin = saldoAdmin[0]["saldo"]! + jumlah_penarikan;
+
+      const saldoCash = saldoAdmin[0]["keuntungan_cash"]! - jumlah_penarikan;
+
+      await DetailSampahBs.update(
+        {
+          saldo: saldoKeuntunganAdmin,
+          keuntungan_cash: saldoCash,
+        },
+        {
+          where: {
+            kode_admin: kode_admin,
+          },
+        }
+      );
+
+      await DetailSampahSuperAdmins.update(
+        {
+          saldo_penjualan: saldoAkhirSuperAdmin,
+        },
+        {
+          where: {
+            kode_super_admin,
+          },
+        }
+      );
+      success({}, "Succes DELETE Tarik Saldo Keuntungan Admin", res);
     } catch (err: any) {
       console.log(err);
       error({ error: err.message }, req.originalUrl, 403, res);
