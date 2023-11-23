@@ -40,6 +40,7 @@ class AdminAuthController extends Routers {
     this.router.post("/auth/del/pen", this.deletepenimbang.bind(this));
     this.router.post("/auth/reg/sup/adm", this.registerSuperAdmin.bind(this));
     this.router.get("/auth/reg/cek", this.getUserByIdCek.bind(this));
+    this.router.get("/auth/reg/cek/pass", this.getUserPasswordCek.bind(this));
 
     this.router.delete("/auth/logout", this.logout.bind(this));
   }
@@ -528,7 +529,7 @@ class AdminAuthController extends Routers {
 
   async getUserByIdCek(req: Request, res: Response) {
     try {
-      const { kode_reg, password } = req.body;
+      const { kode_reg} = req.body;
       // const row = await Users.findByPk(kode_reg);
 
       const user = await Users.findOne({
@@ -542,6 +543,33 @@ class AdminAuthController extends Routers {
         return false;
       } else {
         statusTrue("Datas Users True" , res);
+        return true;
+      }
+
+     
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
+  }
+
+  async getUserPasswordCek(req: Request, res: Response) {
+    try {
+      const {kode_reg, password} = req.body;
+      // const row = await Users.findByPk(kode_reg);
+      const user = await Users.findOne({
+        where: { kode_reg: kode_reg },
+      })
+
+      const match= await bcrypt.compare(password, user?.password as string);
+
+      // await matchPassword(password, user?.password as string, res, req);
+
+      if(!match){
+        statusFalse("Datas Password Users False" , res);
+        return false;
+      } else {
+        statusTrue("Datas Password Users True" , res);
         return true;
       }
 
