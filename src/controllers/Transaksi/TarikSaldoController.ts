@@ -248,8 +248,6 @@ class TransaksiTarikSaldoController extends Routers {
           res
         );
 
-      let status = false;
-      const kodeTariksaldo: string = randomKodeNumberSampah("KTS-");
       const saldoAdmin = await DetailSampahBs.findAll({
         where: {
           kode_admin,
@@ -272,8 +270,7 @@ class TransaksiTarikSaldoController extends Routers {
 
       const saldoAkhirSuperAdmin =
         saldoSuperAdmin[0]["saldo_penjualan"]! +
-        jumlah_penarikan +
-        biayaAdmin[0]["harga"]!;
+        jumlah_penarikan 
 
       const keuntungan = saldoSuperAdmin[0]["saldo"]! - biayaAdmin[0]["harga"]!;
 
