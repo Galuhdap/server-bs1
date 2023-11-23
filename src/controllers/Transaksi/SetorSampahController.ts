@@ -504,6 +504,7 @@ class SetorSampahController extends Routers {
       const rows = await SusutSampahAdmins.destroy({
         where: {
           kode_susut_sampah_bs,
+          
         },
       });
 
