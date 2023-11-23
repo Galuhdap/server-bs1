@@ -39,6 +39,7 @@ class AdminAuthController extends Routers {
     this.router.post("/auth/updreg/pen", this.updateRegPenimbang.bind(this));
     this.router.post("/auth/del/pen", this.deletepenimbang.bind(this));
     this.router.post("/auth/reg/sup/adm", this.registerSuperAdmin.bind(this));
+    this.router.get("/auth/reg/cek", this.getUserByIdCek.bind(this));
 
     this.router.delete("/auth/logout", this.logout.bind(this));
   }
@@ -534,7 +535,7 @@ class AdminAuthController extends Routers {
         where: { kode_reg: kode_reg },
       });
 
-      await matchPassword(password, user?.password as string, res, req);
+      // await matchPassword(password, user?.password as string, res, req);
 
       if(!user){
         statusFalse("Datas Users False" , res);
