@@ -253,9 +253,9 @@ class PenjualanSampahController extends Routers {
 
       const penjualan = total - keuntungan;
 
-      const _berat = admin[0]["berat"]! - berat;
-      const _keuntungan = admin[0]["saldo"]! + keuntungan;
-      const _total = admin[0]["saldo_penjualan"]! + penjualan;
+      const _berat = admin[0]["berat"]! + berat;
+      const _keuntungan = admin[0]["saldo"]! - keuntungan;
+      const _total = admin[0]["saldo_penjualan"]! - penjualan;
 
       await DetailSampahSuperAdmins.update(
         {
