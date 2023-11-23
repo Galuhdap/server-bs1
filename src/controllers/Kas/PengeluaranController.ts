@@ -14,8 +14,10 @@ class PengeluaranController extends Routers {
     super();
     this.router.get("/kas/pengeluaran/induk", this.getpengeluaranSA.bind(this));
     this.router.post("/kas/pengeluaran/induk", this.pengeluaranSA.bind(this));
+    this.router.delete("/kas/pengeluaran/induk", this.hapusPengeluaranSA.bind(this));
     this.router.get("/kas/pengeluaran/admin", this.getpengeluaranAdmin.bind(this));
     this.router.post("/kas/pengeluaran/admin", this.pengeluaranAdmin.bind(this));
+    this.router.delete("/kas/pengeluaran/admin", this.hapusPengeluaranAdmin.bind(this));
   }
 
   async pengeluaranSA(req: Request, res: Response) {

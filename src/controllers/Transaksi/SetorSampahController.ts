@@ -22,7 +22,7 @@ class SetorSampahController extends Routers {
     super();
 
     this.router.post("/setor/sampah", this.setorSampahNasabah.bind(this));
-    this.router.get(
+    this.router.delete(
       "/setor/sampah/hapus",
       this.hapusSetorSampahNasabah.bind(this)
     );
@@ -49,7 +49,7 @@ class SetorSampahController extends Routers {
       this.getSetorSampahNasabahByInduk.bind(this)
     );
     this.router.post("/setor/sampah/susut", this.setorSampahAdmin.bind(this));
-
+    this.router.delete("/setor/sampah/susut", this.hapusSetorSampahAdmin.bind(this));
   }
 
   async getSetorSampahId(req: Request, res: Response) {
@@ -419,8 +419,7 @@ class SetorSampahController extends Routers {
       const keuntungan =
         (kodeBarang!["harga_kedua"]! - kodeBarang!["harga_pertama"]!) * berat;
 
-      const penjualan =  harga - keuntungan;
-
+      const penjualan = harga - keuntungan;
 
       const cekBerat = bs[0]["berat"]! - berat;
 
@@ -434,7 +433,6 @@ class SetorSampahController extends Routers {
           berat: cekBerat,
           saldo: _keuntungan,
           saldo_sekarang: saldos,
-          
         },
         {
           where: {
@@ -446,7 +444,6 @@ class SetorSampahController extends Routers {
       await DetailSampahSuperAdmins.update(
         {
           berat: cekberatAdmin,
-        
         },
         {
           where: {
@@ -505,10 +502,10 @@ class SetorSampahController extends Routers {
       const harga = berat * kodeBarang!["harga_kedua"]!;
 
       const rows = await SusutSampahAdmins.destroy({
-        where:{
-          kode_susut_sampah_bs
-        }
-      })
+        where: {
+          kode_susut_sampah_bs,
+        },
+      });
 
       const bs = await DetailSampahBs.findAll({
         where: {
@@ -525,22 +522,20 @@ class SetorSampahController extends Routers {
       const keuntungan =
         (kodeBarang!["harga_kedua"]! - kodeBarang!["harga_pertama"]!) * berat;
 
-      const penjualan =  harga - keuntungan;
+      const penjualan = harga - keuntungan;
 
       const cekBerat = bs[0]["berat"]! + berat;
- 
+
       const _keuntungan = bs[0]["saldo"]! - keuntungan;
       const saldos = bs[0]["saldo_sekarang"]! - penjualan;
 
       const cekberatAdmin = admin[0]["berat"]! - berat;
 
-
       const updateSampahBS = await DetailSampahBs.update(
         {
           berat: cekBerat,
-          saldo:_keuntungan,
+          saldo: _keuntungan,
           saldo_sekarang: saldos,
-          
         },
         {
           where: {
@@ -552,7 +547,6 @@ class SetorSampahController extends Routers {
       await DetailSampahSuperAdmins.update(
         {
           berat: cekberatAdmin,
-        
         },
         {
           where: {
@@ -700,7 +694,6 @@ class SetorSampahController extends Routers {
       error({ error: err.message }, req.originalUrl, 403, res);
     }
   }
-
 }
 
 export default SetorSampahController;
