@@ -177,12 +177,12 @@ class TransaksiTarikSaldoController extends Routers {
         jumlah_penarikan -
         biayaAdmin[0]["harga"]!;
 
-
-      const saldoCash =
-        saldoAdmin[0]["saldo_cash"]! + saldoAkhir;
+      const saldoCash = saldoAdmin[0]["saldo_cash"]! + jumlah_penarikan;
 
       const saldoAkhirSuperAdmin =
-        saldoSuperAdmin[0]["saldo_penjualan"]! - jumlah_penarikan - biayaAdmin[0]["harga"]!;
+        saldoSuperAdmin[0]["saldo_penjualan"]! -
+        jumlah_penarikan -
+        biayaAdmin[0]["harga"]!;
 
       const keuntungan = saldoSuperAdmin[0]["saldo"]! + biayaAdmin[0]["harga"]!;
 
@@ -200,7 +200,7 @@ class TransaksiTarikSaldoController extends Routers {
       await DetailSampahBs.update(
         {
           saldo_sekarang: saldoAkhir,
-          saldo_cash: saldoCash
+          saldo_cash: saldoCash,
         },
         {
           where: {
@@ -247,7 +247,8 @@ class TransaksiTarikSaldoController extends Routers {
       const saldoAkhir =
         saldoNasabah[0]["saldo"]! - jumlah_penarikan - biayaAdmin[0]["harga"]!;
 
-      const saldoAkhirBs = saldoBS[0]["saldo"]! - jumlah_penarikan - biayaAdmin[0]["harga"]!;
+      const saldoAkhirBs =
+        saldoBS[0]["saldo"]! - jumlah_penarikan - biayaAdmin[0]["harga"]!;
       const saldoCash = saldoBS[0]["saldo_cash"]! - jumlah_penarikan;
 
       const keuntungan =
@@ -277,7 +278,7 @@ class TransaksiTarikSaldoController extends Routers {
       await DetailSampahBs.update(
         {
           saldo: keuntungan,
-          saldo_cash: saldoCash
+          saldo_cash: saldoCash,
         },
         {
           where: {
@@ -475,12 +476,8 @@ class TransaksiTarikSaldoController extends Routers {
 
     const kodeAdmin = await SuperAdmins.findByPk(kode_super_induk);
 
-    if(!kodeAdmin) return error(
-      { message: "NOT FOUND" },
-      req.originalUrl,
-      402,
-      res
-    );
+    if (!kodeAdmin)
+      return error({ message: "NOT FOUND" }, req.originalUrl, 402, res);
 
     const kodeBiayaAdmin: string = randomKodeNumberSampah("KBA-");
     const kodeBiaya: string = randomKodeNumberSampah("KA-");
@@ -551,6 +548,7 @@ class TransaksiTarikSaldoController extends Routers {
       error({ error: err.message }, req.originalUrl, 403, res);
     }
   }
+  
   async cekStatusTombolAdmin(req: Request, res: Response) {
     const { kode_admin } = req.body;
     try {
@@ -613,7 +611,7 @@ class TransaksiTarikSaldoController extends Routers {
       await DetailSampahBs.update(
         {
           saldo: saldoKeuntunganAdmin,
-          keuntungan_cash: saldoCash
+          keuntungan_cash: saldoCash,
         },
         {
           where: {
@@ -659,7 +657,7 @@ class TransaksiTarikSaldoController extends Routers {
         },
       });
 
-      success({rows}, "Tarik Keuntungan Admin", res);
+      success({ rows }, "Tarik Keuntungan Admin", res);
     } catch (err: any) {
       console.log(err);
       error({ error: err.message }, req.originalUrl, 403, res);
@@ -670,15 +668,13 @@ class TransaksiTarikSaldoController extends Routers {
     try {
       const { kode_super_admin } = req.body;
 
-      
-
       const rows = await TarikKeuntunganAdmins.findAll({
         where: {
           kode_super_admin,
         },
       });
 
-      success({rows}, "Tarik Keuntungan Admin", res);
+      success({ rows }, "Tarik Keuntungan Admin", res);
     } catch (err: any) {
       console.log(err);
       error({ error: err.message }, req.originalUrl, 403, res);

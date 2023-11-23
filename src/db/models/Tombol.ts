@@ -18,7 +18,6 @@ export interface TombolOutput extends Required<TombolAttributes>{}
 class Tombol extends Model<TombolAttributes, TombolInput> implements TombolAttributes{
   id!: number;
   tombol1!: boolean | null;
-  satuan!: number | null;
   kode_admin!: string | null;
   kode_super_induk!: string | null;
 

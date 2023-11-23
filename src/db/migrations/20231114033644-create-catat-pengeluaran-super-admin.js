@@ -10,7 +10,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       nama_pengeluaran: {
-        type: Sequelize.DOUBLE
+        type: Sequelize.STRING
       },
       harga: {
         type: Sequelize.DOUBLE

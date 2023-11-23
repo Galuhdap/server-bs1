@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import Routers from "../RouterController";
 import bcrypt from "bcrypt";
-import error, { success } from "./../../helpers/response";
+import error, { statusFalse, statusTrue, success } from "./../../helpers/response";
 import randomKodeNumber, { randomKodeNumberSampah } from "../../helpers/utils";
 import dotenv from "dotenv";
 import { accesTokenJwt, matchPassword, refreshTokenJwt, secretJwt } from "./AuthConfig";
@@ -523,6 +523,32 @@ class AdminAuthController extends Routers {
         error({ error: err.message }, req.originalUrl, 403, res);
     }
        
+  }
+
+  async getUserByIdCek(req: Request, res: Response) {
+    try {
+      const { kode_reg, password } = req.body;
+      // const row = await Users.findByPk(kode_reg);
+
+      const user = await Users.findOne({
+        where: { kode_reg: kode_reg },
+      });
+
+      await matchPassword(password, user?.password as string, res, req);
+
+      if(!user){
+        statusFalse("Datas Users False" , res);
+        return false;
+      } else {
+        statusTrue("Datas Users True" , res);
+        return true;
+      }
+
+     
+    } catch (err: any) {
+      console.log(err);
+      error({ error: err.message }, req.originalUrl, 403, res);
+    }
   }
 }
 
